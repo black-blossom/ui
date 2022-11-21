@@ -1,10 +1,18 @@
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+import darkTheme from './themes/darkTheme';
+
 function App() {
 
   return (
-    <div className="App">
+    <ThemeProvider theme={darkTheme}>
+      <CssBaseline enableColorScheme />
+      <div className="App">
         hello world
-    </div>
-  )
-}
+      </div>
+    </ThemeProvider>
+  );
+};
 
-export default App
+export default App;
