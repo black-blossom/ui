@@ -1,16 +1,17 @@
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
+import {
+  CssBaseline,
+  ThemeProvider,
+} from '@mui/material';
 
 import darkTheme from './themes/darkTheme';
+import TopBar from './components/TopBar';
 
 function App() {
 
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
-      <div className="App">
-        hello world
-      </div>
+      <TopBar />
     </ThemeProvider>
   );
 };
