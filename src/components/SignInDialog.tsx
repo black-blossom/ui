@@ -29,8 +29,8 @@ const SignInDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) 
     <Dialog open={open}>
       <DialogContent sx={{ maxWidth: 400 }}>
         <Stack direction="column" spacing={4}>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-            <Avatar src={metamaskLogo} sx={{ width: 36, height: 36 }} />
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Avatar src={metamaskLogo} sx={{ width: 40, height: 40 }} />
             <Typography variant="h6">
               Sign in with Metamask
             </Typography>
@@ -39,23 +39,29 @@ const SignInDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) 
             </IconButton>
           </Stack>
 
-          <Stack direction="column" spacing={2}>
+          <Stack direction="column" spacing={3}>
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Verified />
+              <Avatar sx={{ bgcolor: 'lightgray' }}>
+                <Verified />
+              </Avatar>
               <Typography variant="body2">
                 Your signature verfies that you are the owner of this address
               </Typography>
             </Stack>
 
             <Stack direction="row" alignItems="center" spacing={2}>
-              <Handshake />
+              <Avatar sx={{ bgcolor: 'lightgray' }}>
+                <Handshake />
+              </Avatar>
               <Typography variant="body2">
                 Sign to approve our Terms of Service & Privacy Policy
               </Typography>
             </Stack>
 
             <Stack direction="row" alignItems="center" spacing={2}>
-              <LocalGasStation />
+              <Avatar sx={{ bgcolor: 'lightgray' }}>
+                <LocalGasStation />
+              </Avatar>
               <Typography variant="body2">
                 No gas fee when signing
               </Typography>
