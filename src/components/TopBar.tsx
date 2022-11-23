@@ -5,11 +5,19 @@ import {
   Avatar,
   Badge,
   Button,
+  IconButton,
+  InputAdornment,
   Stack,
+  TextField,
   Toolbar,
   Tooltip,
   Typography,
 } from '@mui/material';
+
+import {
+  ClearOutlined,
+  SearchOutlined,
+} from '@mui/icons-material';
 
 import avatar from './../assets/avatar.png';
 import SignInDialog from './SignInDialog';
@@ -22,7 +30,25 @@ function TopBar() {
     <>
       <AppBar color="transparent" sx={{ boxShadow: 'none' }}>
         <Toolbar>
-          <Typography sx={{ flexGrow: 1, marginLeft: 10 }}></Typography>
+          <TextField
+            placeholder="Search"
+            size="small"
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start" sx={{ marginRight: 2 }}>
+                  <SearchOutlined />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton>
+                    <ClearOutlined />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
+            sx={{ flexGrow: 1, marginLeft: 16, marginRight: 8 }}
+          />
           { auth ? (
             <Stack direction="row" alignItems="center" spacing={3}>
               <Tooltip title="Connected to Polygon Mainnet" placement="left">
