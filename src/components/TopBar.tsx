@@ -5,6 +5,7 @@ import {
   Avatar,
   Badge,
   Button,
+  ButtonBase,
   IconButton,
   InputAdornment,
   Stack,
@@ -58,7 +59,9 @@ function TopBar() {
                 <Typography>Godyl</Typography>
                 <Typography variant="caption">0x106...213C</Typography>
               </Stack>
-              <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
+              <ButtonBase>
+                <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
+              </ButtonBase>
             </Stack>
           ) : (
             <Button variant="outlined" size="small" onClick={ () => setOpenDialog(true) }>Sign in with Wallet</Button>
