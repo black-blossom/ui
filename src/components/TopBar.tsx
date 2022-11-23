@@ -11,7 +11,6 @@ import {
   Typography,
 } from '@mui/material';
 
-import logo from './../assets/logo.png';
 import avatar from './../assets/avatar.png';
 import SignInDialog from './SignInDialog';
 
@@ -21,10 +20,9 @@ function TopBar() {
 
   return (
     <>
-      <AppBar>
+      <AppBar color="transparent" sx={{ boxShadow: 'none' }}>
         <Toolbar>
-          <Avatar src={logo} sx={{ bgcolor: 'white', width: 40, height: 40, marginRight: 2 }} />
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>Black Blossom</Typography>
+          <Typography sx={{ flexGrow: 1, marginLeft: 10 }}></Typography>
           { auth ? (
             <Stack direction="row" alignItems="center" spacing={3}>
               <Tooltip title="Connected to Polygon Mainnet" placement="left">
@@ -42,8 +40,10 @@ function TopBar() {
         </Toolbar>
       </AppBar>
 
-      // TODO: this should be in App.tsx but we won't do this until we create the state management
-      //       for auth
+      {/*
+        TODO: this should be in App.tsx but we won't do this until we create the state management
+              for auth
+      */}
       <SignInDialog
         open={openDialog}
         handleCancel={ () => setOpenDialog(false) }

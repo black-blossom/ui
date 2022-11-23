@@ -5,6 +5,7 @@ import {
 
 import darkTheme from './themes/darkTheme';
 import TopBar from './components/TopBar';
+import SideBar from './components/SideBar';
 
 function App() {
 
@@ -12,6 +13,7 @@ function App() {
     <ThemeProvider theme={darkTheme}>
       <CssBaseline enableColorScheme />
       <TopBar />
+      <SideBar />
     </ThemeProvider>
   );
 };
