@@ -13,8 +13,6 @@ import {
   LeaderboardOutlined,
   LogoutOutlined,
   NotificationsOutlined,
-  PeopleOutlined,
-  PersonOutlined,
   SettingsOutlined,
   StadiumOutlined,
   TimelineOutlined,
@@ -61,11 +59,6 @@ const SideBar = () => {
           </Tooltip>
 
           <Stack direction="column" alignItems="center" sx={{ position: 'absolute', bottom: 16 }}>
-            <Tooltip title="Profile" placement="right" enterDelay={500} enterNextDelay={500} arrow>
-              <ToggleButton value="profile" sx={{ border: 0 }} >
-                <PersonOutlined />
-              </ToggleButton>
-            </Tooltip>
 
             <Tooltip title="Settings" placement="right" enterDelay={500} enterNextDelay={500} arrow>
               <ToggleButton value="settings" sx={{ border: 0 }} >
