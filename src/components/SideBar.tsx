@@ -60,12 +60,6 @@ const SideBar = () => {
             </ToggleButton>
           </Tooltip>
 
-          <Tooltip title="Friends" placement="right" enterDelay={500} enterNextDelay={500} arrow>
-            <ToggleButton value="friends" sx={{ border: 0 }} >
-              <PeopleOutlined />
-            </ToggleButton>
-          </Tooltip>
-
           <Stack direction="column" alignItems="center" sx={{ position: 'absolute', bottom: 16 }}>
             <Tooltip title="Profile" placement="right" enterDelay={500} enterNextDelay={500} arrow>
               <ToggleButton value="profile" sx={{ border: 0 }} >
