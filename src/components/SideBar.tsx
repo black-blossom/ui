@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { Link, useLocation } from 'wouter';
 
 import {
   Avatar,
@@ -23,10 +22,9 @@ import {
 } from '@mui/icons-material';
 
 import logo from './../assets/logo.png';
+import SideBarItem from './SideBarItem';
 
 const SideBar = () => {
-  const [location, setLocation] = useLocation();
-
   const topItems = useMemo(() => {
     return [
       {
@@ -82,6 +80,12 @@ const SideBar = () => {
         link: '/docs',
         match: 'docs'
       },
+      {
+        name: 'Logout',
+        icon: <LogoutOutlined />,
+        link: '/logout',
+        match: ''
+      },
     ];
   }, []);
 
@@ -93,13 +97,13 @@ const SideBar = () => {
           {
             topItems.map((item, index: number) => {
               return (
-                <Link key={index} to={item.link}>
-                  <Tooltip title={item.name} placement="right" enterDelay={500} enterNextDelay={500} arrow>
-                    <ToggleButton value={item.name} sx={{ border: 0 }} selected={ location.split('/')[1] === item.match }>
-                      {item.icon}
-                    </ToggleButton>
-                  </Tooltip>
-                </Link>
+                <SideBarItem
+                  key={index}
+                  name={item.name}
+                  icon={item.icon}
+                  link={item.link}
+                  match={item.match}
+                />
               )
             })
           }
@@ -108,24 +112,17 @@ const SideBar = () => {
             {
               bottomItems.map((item, index: number) => {
                 return (
-                  <Link key={index} to={item.link}>
-                    <Tooltip title={item.name} placement="right" enterDelay={500} enterNextDelay={500} arrow>
-                      <ToggleButton value={item.name} sx={{ border: 0 }} selected={ location.split('/')[1] === item.match }>
-                        {item.icon}
-                      </ToggleButton>
-                    </Tooltip>
-                  </Link>
+                  <SideBarItem
+                    key={index}
+                    name={item.name}
+                    icon={item.icon}
+                    link={item.link}
+                    match={item.match}
+                  />
                 )
               })
             }
-
-            <Tooltip title="Logout" placement="right" enterDelay={500} enterNextDelay={500} arrow>
-              <ToggleButton value="logout" sx={{ border: 0 }}>
-                <LogoutOutlined />
-              </ToggleButton>
-            </Tooltip>
           </Stack>
-
         </Stack>
       </Box>
     </Drawer>
