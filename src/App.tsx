@@ -55,6 +55,20 @@ function App() {
             docs
           </Route>
 
+          <Route path="/profile/:username">
+            {
+              params => {
+                return (
+                  <>{params.username}</>
+                );
+              }
+            }
+          </Route>
+
+          <Route path="/logout">
+            handle logging out user and redirecting to proper page
+          </Route>
+
           <Route>
             404 error
           </Route>
