@@ -1,4 +1,5 @@
 import {
+  Box,
   CssBaseline,
   ThemeProvider,
 } from '@mui/material';
@@ -14,6 +15,9 @@ function App() {
       <CssBaseline enableColorScheme />
       <TopBar />
       <SideBar />
+      <Box sx={{ paddingTop: 4, paddingLeft: 14, paddingRight: 4, paddingBottom: 4 }}>
+        hello world
+      </Box>
     </ThemeProvider>
   );
 };

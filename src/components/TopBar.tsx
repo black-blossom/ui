@@ -29,7 +29,7 @@ function TopBar() {
 
   return (
     <>
-      <AppBar color="transparent" sx={{ boxShadow: 'none' }}>
+      <AppBar position="relative" color="transparent" elevation={0}>
         <Toolbar>
           <TextField
             placeholder="Search"
