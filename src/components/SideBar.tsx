@@ -15,6 +15,7 @@ import {
   NotificationsOutlined,
   SettingsOutlined,
   StadiumOutlined,
+  StorefrontOutlined,
   TimelineOutlined,
 } from '@mui/icons-material';
 
@@ -23,7 +24,7 @@ import logo from './../assets/logo.png';
 const SideBar = () => {
 
   return (
-    <Drawer variant="permanent">
+    <Drawer variant="permanent" elevation={0}>
       <Box sx={{ overflow: 'auto', height: '100vh', padding: 2 }}>
         <Stack direction="column" alignItems="center" justifyContent="flex-start" spacing={2}>
           <Avatar src={logo} sx={{ bgcolor: 'white', width: 40, height: 40, marginBottom: 3 }} />
@@ -55,6 +56,12 @@ const SideBar = () => {
           <Tooltip title="Leaderboard" placement="right" enterDelay={500} enterNextDelay={500} arrow>
             <ToggleButton value="leaderboard" sx={{ border: 0 }} >
               <LeaderboardOutlined />
+            </ToggleButton>
+          </Tooltip>
+
+          <Tooltip title="Store" placement="right" enterDelay={500} enterNextDelay={500} arrow>
+            <ToggleButton value="store" sx={{ border: 0 }} >
+              <StorefrontOutlined />
             </ToggleButton>
           </Tooltip>
 
