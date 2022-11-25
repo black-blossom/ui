@@ -7,8 +7,9 @@ import {
 } from '@mui/material';
 
 import darkTheme from './themes/darkTheme';
-import TopBar from './components/TopBar';
 import SideBar from './components/SideBar';
+import TradePage from './pages/TradePage'
+import TopBar from './components/TopBar';
 
 function App() {
 
@@ -32,7 +33,7 @@ function App() {
           </Route>
 
           <Route path="/trade">
-            trade
+            <TradePage />
           </Route>
 
           <Route path="/arena">
