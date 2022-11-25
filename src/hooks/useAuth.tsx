@@ -14,9 +14,9 @@ interface IAuthStore {
 
 const useAuthStore = create<IAuthStore>((set) => ({
   data: {
-    auth: true,
+    auth: false,
     address: '',
-    username: 'Godyl'
+    username: ''
   },
   authenticate: () => {
     set({data: { auth: true, address: '0x10628634d540a3b9daa77176b1d68ac875c3213c', username: 'Godyl' }});

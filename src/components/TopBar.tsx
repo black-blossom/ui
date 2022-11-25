@@ -22,9 +22,11 @@ import {
 
 import avatar from './../assets/avatar.png';
 import SignInDialog from './SignInDialog';
+import useAuthStore from './../hooks/useAuth';
 
 function TopBar() {
-  const [auth, setAuth] = useState(false);
+  const user = useAuthStore(state => state.data);
+  const useAuthenticate = useAuthStore(state => state.authenticate);
   const [openDialog, setOpenDialog] = useState(false);
 
   return (
@@ -50,14 +52,14 @@ function TopBar() {
             }}
             sx={{ flexGrow: 1, marginLeft: 16, marginRight: 8 }}
           />
-          { auth ? (
+          { user.auth ? (
             <Stack direction="row" alignItems="center" spacing={3}>
               <Tooltip title="Connected to Polygon Mainnet" placement="left">
                 <Badge color="success" badgeContent=" " variant="dot"></Badge>
               </Tooltip>
               <Stack direction="column" alignItems="center">
-                <Typography>Godyl</Typography>
-                <Typography variant="caption">0x106...213C</Typography>
+                <Typography>{user.username}</Typography>
+                <Typography variant="caption">{`${user.address.slice(0, 5)}...${user.address.slice(38, 42)}`}</Typography>
               </Stack>
               <ButtonBase>
                 <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
@@ -77,7 +79,7 @@ function TopBar() {
         open={openDialog}
         handleCancel={ () => setOpenDialog(false) }
         handleConfirm={ () => {
-          setAuth(true);
+          useAuthenticate();
           setOpenDialog(false);
         } }
       />
