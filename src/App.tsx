@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 
 import darkTheme from './themes/darkTheme';
+import LogoutPage from './pages/LogoutPage'
 import SideBar from './components/SideBar';
 import TradePage from './pages/TradePage'
 import TopBar from './components/TopBar';
@@ -21,7 +22,7 @@ function App() {
       <Box sx={{ paddingTop: 4, paddingLeft: 14, paddingRight: 4, paddingBottom: 4 }}>
         <Switch>
           <Route path="/">
-            <Redirect to="/feed" />
+            <Redirect to="/trade" />
           </Route>
 
           <Route path="/feed">
@@ -67,7 +68,7 @@ function App() {
           </Route>
 
           <Route path="/logout">
-            handle logging out user and redirecting to proper page
+            <LogoutPage />
           </Route>
 
           <Route>
