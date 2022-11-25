@@ -23,7 +23,7 @@ interface SignInDialogProps {
   handleConfirm: () => void;
 };
 
-const SignInDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) => {
+const LoginDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) => {
 
   return (
     <Dialog open={open}>
@@ -32,7 +32,7 @@ const SignInDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) 
           <Stack direction="row" alignItems="center" justifyContent="space-between">
             <Avatar src={metamaskLogo} sx={{ width: 40, height: 40 }} />
             <Typography variant="h6">
-              Sign in with Metamask
+              Login with your Wallet
             </Typography>
             <IconButton onClick={ () => handleCancel() }>
               <Clear />
@@ -74,7 +74,7 @@ const SignInDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) 
             onClick={ () => handleConfirm() }
             fullWidth
           >
-            Sign In
+            Sign with Wallet
           </Button>
         </Stack>
       </DialogContent>
@@ -82,4 +82,4 @@ const SignInDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) 
   );
 };
 
-export default SignInDialog;
+export default LoginDialog;

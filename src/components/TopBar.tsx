@@ -21,7 +21,7 @@ import {
 } from '@mui/icons-material';
 
 import avatar from './../assets/avatar.png';
-import SignInDialog from './SignInDialog';
+import LoginDialog from './LoginDialog';
 import useAuthStore from './../hooks/useAuth';
 
 function TopBar() {
@@ -50,7 +50,7 @@ function TopBar() {
                 </InputAdornment>
               )
             }}
-            sx={{ flexGrow: 1, marginLeft: 16, marginRight: 8 }}
+            sx={{ flexGrow: 1, marginLeft: 11, marginRight: 3 }}
           />
           { user.auth ? (
             <Stack direction="row" alignItems="center" spacing={3}>
@@ -66,7 +66,7 @@ function TopBar() {
               </ButtonBase>
             </Stack>
           ) : (
-            <Button variant="outlined" size="small" onClick={ () => setOpenDialog(true) }>Sign in with Wallet</Button>
+            <Button variant="outlined" size="small" onClick={ () => setOpenDialog(true) }>Login</Button>
           ) }
         </Toolbar>
       </AppBar>
@@ -75,7 +75,7 @@ function TopBar() {
         TODO: this should be in App.tsx but we won't do this until we create the state management
               for auth
       */}
-      <SignInDialog
+      <LoginDialog
         open={openDialog}
         handleCancel={ () => setOpenDialog(false) }
         handleConfirm={ () => {
