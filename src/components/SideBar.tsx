@@ -46,8 +46,8 @@ const SideBar = () => {
       {
         name: 'Arena',
         icon: <StadiumOutlined />,
-        link: '/arean',
-        match: 'arean'
+        link: '/arena',
+        match: 'arena'
       },
       {
         name: 'Leaderboard',
