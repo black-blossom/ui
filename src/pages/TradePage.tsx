@@ -1,6 +1,5 @@
 import {
   Card,
-  CardHeader,
   Stack,
 } from '@mui/material';
 
@@ -10,8 +9,7 @@ const TradePage = () => {
 
   return (
     <Stack direction="column" alignItems="center">
-      <Card variant="outlined" sx={{ width: 800 }}>
-        <CardHeader title="ETH/USDC" />
+      <Card variant="outlined" sx={{ width: 1 }}>
         <TVChart />
       </Card>
     </Stack>
