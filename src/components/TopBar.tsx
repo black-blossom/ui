@@ -28,6 +28,7 @@ import useNetworkStore from './../hooks/useNetwork';
 function TopBar() {
   const web3Available = useNetworkStore(state => state.web3Available);
   const connectWallet = useNetworkStore(state => state.connectWallet);
+  const requestNetworkSwitch = useNetworkStore(state => state.requestNetworkSwitch);
 
   const user = useAuthStore(state => state.data);
   const useAuthenticate = useAuthStore(state => state.authenticate);
@@ -99,6 +100,7 @@ function TopBar() {
         handleConfirm={ () => {
           useAuthenticate();
           setOpenDialog(false);
+          requestNetworkSwitch();
         } }
       />
     </>

@@ -12,6 +12,7 @@ interface IAuthStore {
 
   init: (apiKey: string, network: 'matic') => void;
   connectWallet: () => Promise<boolean>;
+  requestNetworkSwitch: () => void;
 };
 
 const useNetworkStore = create<IAuthStore>((set, get) => ({
@@ -48,11 +49,30 @@ const useNetworkStore = create<IAuthStore>((set, get) => ({
     }
 
     set({
-      rpcProvider: provider,
+      web3Provider: provider,
       signer: provider.getSigner(),
     });
     return true;
-  }
+  },
+
+  requestNetworkSwitch: async () => {
+    if(!get().web3Available) return;
+
+    const web3provider = get().web3Provider;
+
+    // TODO: we should be checking for the target network based on the rpcProvider
+    try {
+      await web3provider?.send('wallet_switchEthereumChain', [{ chainId: '0x89' }]);
+    }
+    catch(error) {
+      await web3provider?.send('wallet_addEthereumChain', [{
+        chainId: '0x89',
+        chainName: 'Polygon Mainnet',
+        rpcUrls: ['http://localhost:8545'],
+        // rpcUrls: ['https://polygon-rpc.com', 'https://rpc.ankr.com/polygon'],
+      }]);
+    }
+  },
 }));
 
 export default useNetworkStore;
