@@ -21,45 +21,54 @@ import {
 
 import logo from './../assets/logo.png';
 import SideBarItem from './SideBarItem';
+import useAuthStore from './../hooks/useAuth';
 
 const SideBar = () => {
+  const user = useAuthStore(state => state.data);
+
   const topItems = useMemo(() => {
     return [
       {
         name: 'Feed',
         icon: <TimelineOutlined />,
         link: '/feed',
-        match: 'feed'
+        match: 'feed',
+        authRequired: true,
       },
       {
         name: 'Notifications',
         icon: <NotificationsOutlined />,
         link: '/notifications',
-        match: 'notifications'
+        match: 'notifications',
+        authRequired: true,
       },
       {
         name: 'Trade',
         icon: <CandlestickChartOutlined />,
         link: '/trade',
-        match: 'trade'
+        match: 'trade',
+        authRequired: false,
       },
       {
         name: 'Arena',
         icon: <StadiumOutlined />,
         link: '/arena',
-        match: 'arena'
+        match: 'arena',
+        authRequired: false,
       },
       {
         name: 'Leaderboard',
         icon: <LeaderboardOutlined />,
         link: '/leaderboard',
-        match: 'leaderboard'
+        match: 'leaderboard',
+        authRequired: false,
       },
       {
         name: 'Store',
         icon: <StorefrontOutlined />,
         link: '/store',
-        match: 'store'
+        match: 'store',
+        authRequired: false,
       },
     ];
   }, []);
@@ -70,19 +79,22 @@ const SideBar = () => {
         name: 'Settings',
         icon: <SettingsOutlined />,
         link: '/settings',
-        match: 'settings'
+        match: 'settings',
+        authRequired: true,
       },
       {
         name: 'Docs',
         icon: <ArticleOutlined />,
         link: '/docs',
-        match: 'docs'
+        match: 'docs',
+        authRequired: false,
       },
       {
         name: 'Logout',
         icon: <LogoutOutlined />,
         link: '/logout',
-        match: ''
+        match: '',
+        authRequired: true,
       },
     ];
   }, []);
@@ -94,6 +106,8 @@ const SideBar = () => {
           <Avatar src={logo} sx={{ bgcolor: 'white', width: 40, height: 40, marginBottom: 3 }} />
           {
             topItems.map((item, index: number) => {
+              if(item.authRequired && !user.auth) return;
+
               return (
                 <SideBarItem
                   key={index}
@@ -109,6 +123,8 @@ const SideBar = () => {
           <Stack direction="column" alignItems="center" sx={{ position: 'absolute', bottom: 16 }}>
             {
               bottomItems.map((item, index: number) => {
+                if(item.authRequired && !user.auth) return;
+
                 return (
                   <SideBarItem
                     key={index}
