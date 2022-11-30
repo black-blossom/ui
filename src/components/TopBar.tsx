@@ -27,12 +27,17 @@ import useNetworkStore from './../hooks/useNetwork';
 
 function TopBar() {
   const web3Available = useNetworkStore(state => state.web3Available);
+  const connectWallet = useNetworkStore(state => state.connectWallet);
 
   const user = useAuthStore(state => state.data);
   const useAuthenticate = useAuthStore(state => state.authenticate);
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleLogin = useCallback(async () => {
+    const connected = await connectWallet();
+    // TODO: let the user know that they must connect their wallet first
+    if(!connected) return;
+
     setOpenDialog(true);
   }, []);
 

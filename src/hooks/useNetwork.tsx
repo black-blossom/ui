@@ -11,7 +11,7 @@ interface IAuthStore {
   signer: ethers.providers.JsonRpcSigner | null;
 
   init: (apiKey: string, network: 'matic') => void;
-  connectWallet: () => void;
+  connectWallet: () => Promise<boolean>;
 };
 
 const useNetworkStore = create<IAuthStore>((set, get) => ({
@@ -36,7 +36,22 @@ const useNetworkStore = create<IAuthStore>((set, get) => ({
   },
 
   connectWallet: async () => {
-    if(!get().web3Available) return;
+    if(!get().web3Available) return false;
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    try {
+      await provider.send('eth_requestAccounts', [])
+    }
+    catch(error) {
+      return false;
+    }
+
+    set({
+      rpcProvider: provider,
+      signer: provider.getSigner(),
+    });
+    return true;
   }
 }));
 
