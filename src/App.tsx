@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Redirect, Route, Switch } from 'wouter';
 
 import {
@@ -11,8 +12,14 @@ import LogoutPage from './pages/LogoutPage'
 import SideBar from './components/SideBar';
 import TradePage from './pages/TradePage'
 import TopBar from './components/TopBar';
+import useNetworkStore from './hooks/useNetwork';
 
-function App() {
+const App = () => {
+  const initNetwork = useNetworkStore(state => state.init);
+
+  useEffect(() => {
+    initNetwork('', 'matic');
+  }, []);
 
   return (
     <ThemeProvider theme={darkTheme}>

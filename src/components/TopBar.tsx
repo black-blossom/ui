@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   AppBar,
@@ -23,11 +23,18 @@ import {
 import avatar from './../assets/avatar.png';
 import LoginDialog from './LoginDialog';
 import useAuthStore from './../hooks/useAuth';
+import useNetworkStore from './../hooks/useNetwork';
 
 function TopBar() {
+  const web3Available = useNetworkStore(state => state.web3Available);
+
   const user = useAuthStore(state => state.data);
   const useAuthenticate = useAuthStore(state => state.authenticate);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const handleLogin = useCallback(async () => {
+    setOpenDialog(true);
+  }, []);
 
   return (
     <>
@@ -65,9 +72,15 @@ function TopBar() {
                 <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
               </ButtonBase>
             </Stack>
+          ) : web3Available ? (
+            <Button variant="outlined" size="small" onClick={ () => handleLogin() }>Login</Button>
           ) : (
-            <Button variant="outlined" size="small" onClick={ () => setOpenDialog(true) }>Login</Button>
-          ) }
+            <Tooltip title="No wallet available" placement="bottom">
+              <span>
+                <Button variant="outlined" size="small" disabled>Login</Button>
+              </span>
+            </Tooltip>
+          )}
         </Toolbar>
       </AppBar>
 
