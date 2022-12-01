@@ -25,7 +25,6 @@ const LoginButton = () => {
     <>
       <Button
         variant="outlined"
-        size="small"
         onClick={handleLogin}
       >
         Login
