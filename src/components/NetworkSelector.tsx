@@ -3,8 +3,6 @@ import {
   Avatar,
   MenuItem,
   Select,
-  Stack,
-  Typography,
 } from '@mui/material';
 
 import polygonLogo from './../assets/polygon-logo.png';
@@ -37,19 +35,12 @@ const NetworkSelector = () => {
       value={selected}
       size="small"
       onChange={ (e) => setSelected(e.target.value) }
-      sx={{ marginRight: 3 }}
     >
-      <MenuItem disabled>
-        <Typography>Select Network</Typography>
-      </MenuItem>
       {
         supportedNetworks.map(({name, logo}, index) => {
           return (
-            <MenuItem key={index} value={name}>
-              <Stack direction="row" spacing={2}>
-                <Avatar src={logo} sx={{ width: 20, height: 20 }} />
-                <Typography variant="body2">{name}</Typography>
-              </Stack>
+            <MenuItem key={index} value={name} sx={{ justifyContent: 'center' }}>
+              <Avatar src={logo} sx={{ width: 20, height: 20 }} />
             </MenuItem>
           );
         })
