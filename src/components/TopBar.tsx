@@ -21,26 +21,13 @@ import {
 } from '@mui/icons-material';
 
 import avatar from './../assets/avatar.png';
-import LoginDialog from './LoginDialog';
+import LoginButton from './LoginButton';
 import useAuthStore from './../hooks/useAuth';
 import useNetworkStore from './../hooks/useNetwork';
 
-function TopBar() {
+const TopBar = () => {
   const web3Available = useNetworkStore(state => state.web3Available);
-  const connectWallet = useNetworkStore(state => state.connectWallet);
-  const requestNetworkSwitch = useNetworkStore(state => state.requestNetworkSwitch);
-
   const user = useAuthStore(state => state.data);
-  const useAuthenticate = useAuthStore(state => state.authenticate);
-  const [openDialog, setOpenDialog] = useState(false);
-
-  const handleLogin = useCallback(async () => {
-    const connected = await connectWallet();
-    // TODO: let the user know that they must connect their wallet first
-    if(!connected) return;
-
-    setOpenDialog(true);
-  }, []);
 
   return (
     <>
@@ -79,7 +66,7 @@ function TopBar() {
               </ButtonBase>
             </Stack>
           ) : web3Available ? (
-            <Button variant="outlined" size="small" onClick={ () => handleLogin() }>Login</Button>
+            <LoginButton />
           ) : (
             <Tooltip title="No wallet available" placement="bottom">
               <span>
@@ -89,20 +76,6 @@ function TopBar() {
           )}
         </Toolbar>
       </AppBar>
-
-      {/*
-        TODO: this should be in App.tsx but we won't do this until we create the state management
-              for auth
-      */}
-      <LoginDialog
-        open={openDialog}
-        handleCancel={ () => setOpenDialog(false) }
-        handleConfirm={ () => {
-          useAuthenticate();
-          setOpenDialog(false);
-          requestNetworkSwitch();
-        } }
-      />
     </>
   );
 };
