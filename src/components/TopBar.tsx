@@ -1,18 +1,11 @@
-import { useCallback, useState } from 'react';
-
 import {
   AppBar,
-  Avatar,
-  Badge,
   Button,
-  ButtonBase,
   IconButton,
   InputAdornment,
-  Stack,
   TextField,
   Toolbar,
   Tooltip,
-  Typography,
 } from '@mui/material';
 
 import {
@@ -20,7 +13,7 @@ import {
   SearchOutlined,
 } from '@mui/icons-material';
 
-import avatar from './../assets/avatar.png';
+import AccountBar from './AccountBar';
 import LoginButton from './LoginButton';
 import useAuthStore from './../hooks/useAuth';
 import useNetworkStore from './../hooks/useNetwork';
@@ -53,18 +46,7 @@ const TopBar = () => {
             sx={{ flexGrow: 1, marginLeft: 11, marginRight: 3 }}
           />
           { user.auth ? (
-            <Stack direction="row" alignItems="center" spacing={3}>
-              <Tooltip title="Connected to Polygon Mainnet" placement="left">
-                <Badge color="success" badgeContent=" " variant="dot"></Badge>
-              </Tooltip>
-              <Stack direction="column" alignItems="center">
-                <Typography>{user.username}</Typography>
-                <Typography variant="caption">{`${user.address.slice(0, 5)}...${user.address.slice(38, 42)}`}</Typography>
-              </Stack>
-              <ButtonBase>
-                <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
-              </ButtonBase>
-            </Stack>
+            <AccountBar />
           ) : web3Available ? (
             <LoginButton />
           ) : (
