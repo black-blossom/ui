@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   AppBar,
   Box,
@@ -8,6 +9,7 @@ import {
 
 import AccountBar from './AccountBar';
 import LoginButton from './LoginButton';
+import NetworkSelector from './NetworkSelector';
 import useAuthStore from './../hooks/useAuth';
 import useNetworkStore from './../hooks/useNetwork';
 
@@ -21,6 +23,7 @@ const TopBar = () => {
       <Toolbar>
         <Box sx={{ marginLeft: 11 }} />
         <Box sx={{ flexGrow: 1 }} />
+        <NetworkSelector />
         { user.auth ? (
           <AccountBar />
         ) : web3Available ? (
