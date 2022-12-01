@@ -17,19 +17,21 @@ const NetworkSelector = () => {
       {
         name: 'Polygon',
         logo: polygonLogo,
+        available: true,
       },
       {
         name: 'Arbitrum',
         logo: arbitrumLogo,
+        available: false,
       },
       {
         name: 'Optimism',
         logo: optimismLogo,
+        available: false,
       },
     ];
   }, []);
 
-  // TODO: add title of pages here
   return (
     <Select
       value={selected}
@@ -37,9 +39,9 @@ const NetworkSelector = () => {
       onChange={ (e) => setSelected(e.target.value) }
     >
       {
-        supportedNetworks.map(({name, logo}, index) => {
+        supportedNetworks.map(({name, logo, available}, index) => {
           return (
-            <MenuItem key={index} value={name} sx={{ justifyContent: 'center' }}>
+            <MenuItem key={index} value={name} disabled={!available} sx={{ justifyContent: 'center' }}>
               <Avatar src={logo} sx={{ width: 20, height: 20 }} />
             </MenuItem>
           );
