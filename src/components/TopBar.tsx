@@ -1,6 +1,7 @@
 import {
   AppBar,
   Box,
+  Stack,
   Toolbar,
 } from '@mui/material';
 
@@ -18,8 +19,10 @@ const TopBar = () => {
       <Toolbar>
         <Box sx={{ marginLeft: 11 }} />
         <Box sx={{ flexGrow: 1 }} />
-        <NetworkSelector />
-        { user.auth ? <AccountBar /> : <LoginButton /> }
+        <Stack direction="row" spacing={2}>
+          <NetworkSelector />
+          { user.auth ? <AccountBar /> : <LoginButton /> }
+        </Stack>
       </Toolbar>
     </AppBar>
   );
