@@ -2,7 +2,6 @@ import {
   Avatar,
   Badge,
   ButtonBase,
-  Tooltip,
   Stack,
   Typography,
 } from '@mui/material';
@@ -13,17 +12,17 @@ import useAuthStore from './../hooks/useAuth';
 const AccountBar = () => {
   const user = useAuthStore(state => state.data);
 
+  // TODO: badge should display if wallet is connected to correct network
   return (
     <Stack direction="row" alignItems="center" spacing={3}>
-      <Tooltip title="Connected to Polygon Mainnet" placement="left">
-        <Badge color="success" badgeContent=" " variant="dot" style={{ display: 'block' }}></Badge>
-      </Tooltip>
       <Stack direction="column" alignItems="center">
-        <Typography>{user.username}</Typography>
+        <Typography variant="body2">{user.username}</Typography>
         <Typography variant="caption">{`${user.address.slice(0, 5)}...${user.address.slice(38, 42)}`}</Typography>
       </Stack>
       <ButtonBase>
-        <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
+        <Badge color="success" overlap="circular" variant="dot">
+          <Avatar src={avatar} sx={{ width: 40, height: 40 }} />
+        </Badge>
       </ButtonBase>
     </Stack>
 
