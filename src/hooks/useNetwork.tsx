@@ -14,7 +14,6 @@ interface IAuthStore {
   connectWallet: () => Promise<boolean>;
 };
 
-// TODO: use the web3-react Network connector
 const useNetworkStore = create<IAuthStore>((set, get) => ({
   chainId: 137,
   alchemy: null,

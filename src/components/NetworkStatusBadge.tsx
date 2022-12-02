@@ -7,7 +7,6 @@ const NetworkStatusBadge = ({ children }: any) => {
   const appChainId = useNetworkStore(state => state.chainId);
   const walletChainId = useChainId();
 
-  // TODO: badge should display if wallet is connected to correct network
   return (
     <Badge
       variant="dot"
