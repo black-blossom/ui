@@ -32,7 +32,7 @@ const useNetworkStore = create<IAuthStore>((set, get) => ({
 
   connectWallet: async () => {
     let success = true;
-    await metamask.activate(getAddChainParameters(137))
+    await metamask.activate(getAddChainParameters(get().chainId))
       .catch((error) => {
         success = false;
       });
