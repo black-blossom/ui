@@ -1,47 +1,30 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import {
   Avatar,
   MenuItem,
   Select,
 } from '@mui/material';
 
-import polygonLogo from './../assets/polygon-logo.png';
-import arbitrumLogo from './../assets/arbitrum-logo.png';
-import optimismLogo from './../assets/optimism-logo.png';
+import { CHAINLIST } from '../utils/chains';
 
 const NetworkSelector = () => {
-  const [selected, setSelected] = useState('Polygon');
-
-  const supportedNetworks = useMemo(() => {
-    return [
-      {
-        name: 'Polygon',
-        logo: polygonLogo,
-        available: true,
-      },
-      {
-        name: 'Arbitrum',
-        logo: arbitrumLogo,
-        available: false,
-      },
-      {
-        name: 'Optimism',
-        logo: optimismLogo,
-        available: false,
-      },
-    ];
-  }, []);
+  const [selected, setSelected] = useState(137);
 
   return (
     <Select
       value={selected}
       size="small"
-      onChange={ (e) => setSelected(e.target.value) }
+      onChange={ (e) => setSelected(Number(e.target.value)) }
     >
       {
-        supportedNetworks.map(({name, logo, available}, index) => {
+        CHAINLIST.map(({ chainId, logo, available }) => {
           return (
-            <MenuItem key={index} value={name} disabled={!available} sx={{ justifyContent: 'center' }}>
+            <MenuItem
+              key={chainId}
+              value={chainId}
+              disabled={!available}
+              sx={{ justifyContent: 'center' }}
+            >
               <Avatar src={logo} sx={{ width: 20, height: 20 }} />
             </MenuItem>
           );

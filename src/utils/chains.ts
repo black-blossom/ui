@@ -1,5 +1,9 @@
 import type { AddEthereumChainParameter } from '@web3-react/types'
 
+import polygonLogo from './../assets/polygon-logo.png';
+import arbitrumLogo from './../assets/arbitrum-logo.png';
+import optimismLogo from './../assets/optimism-logo.png';
+
 const ETH: AddEthereumChainParameter['nativeCurrency'] = {
   name: 'Ether',
   symbol: 'ETH',
@@ -15,6 +19,9 @@ const MATIC: AddEthereumChainParameter['nativeCurrency'] = {
 interface BasicChainInformation {
   urls: string[]
   name: string
+  chainId: number
+  logo: any
+  available: boolean
 }
 
 interface ExtendedChainInformation extends BasicChainInformation {
@@ -50,6 +57,9 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       'https://mainnet.optimism.io',
     ],
     name: 'Optimism',
+    chainId: 10,
+    logo: optimismLogo,
+    available: false,
     nativeCurrency: ETH,
     blockExplorerUrls: ['https://optimistic.etherscan.io'],
   },
@@ -59,6 +69,9 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       'https://arb1.arbitrum.io/rpc',
     ],
     name: 'Arbitrum One',
+    chainId: 42161,
+    logo: arbitrumLogo,
+    available: false,
     nativeCurrency: ETH,
     blockExplorerUrls: ['https://arbiscan.io'],
   },
@@ -69,10 +82,19 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
       // 'https://polygon-rpc.com',
     ],
     name: 'Polygon Mainnet',
+    chainId: 137,
+    logo: polygonLogo,
+    available: true,
     nativeCurrency: MATIC,
     blockExplorerUrls: ['https://polygonscan.com'],
   },
 }
+
+export const CHAINLIST: BasicChainInformation[] | ExtendedChainInformation[] = [
+  CHAINS[137],
+  CHAINS[42161],
+  CHAINS[10],
+]
 
 export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce<{ [chainId: number]: string[] }>(
   (accumulator, chainId) => {
