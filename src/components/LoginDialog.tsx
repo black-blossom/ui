@@ -54,7 +54,7 @@ const LoginDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) =
                 <Handshake />
               </Avatar>
               <Typography variant="body2">
-                Sign to approve our Terms of Service & Privacy Policy
+                Sign to agree to the terms and privacy policy
               </Typography>
             </Stack>
 
