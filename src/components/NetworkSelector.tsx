@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   Avatar,
   MenuItem,
@@ -6,15 +5,16 @@ import {
 } from '@mui/material';
 
 import { CHAINLIST } from '../utils/chains';
+import useNetworkStore from './../hooks/useNetwork';
 
+// TODO: we need to add a way to change the targetChainId + update network
 const NetworkSelector = () => {
-  const [selected, setSelected] = useState(137);
+  const chainId = useNetworkStore(state => state.chainId);
 
   return (
     <Select
-      value={selected}
+      value={chainId}
       size="small"
-      onChange={ (e) => setSelected(Number(e.target.value)) }
     >
       {
         CHAINLIST.map(({ chainId, logo, available }) => {

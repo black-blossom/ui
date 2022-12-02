@@ -18,7 +18,7 @@ const App = () => {
   const initNetwork = useNetworkStore(state => state.init);
 
   useEffect(() => {
-    initNetwork('', 'matic');
+    initNetwork();
   }, []);
 
   return (

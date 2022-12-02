@@ -7,7 +7,6 @@ import useNetworkStore from './../hooks/useNetwork';
 
 const LoginButton = () => {
   const connectWallet = useNetworkStore(state => state.connectWallet);
-  const requestNetworkSwitch = useNetworkStore(state => state.requestNetworkSwitch);
   const useAuthenticate = useAuthStore(state => state.authenticate);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -35,7 +34,6 @@ const LoginButton = () => {
         handleConfirm={ () => {
           useAuthenticate();
           setOpenDialog(false);
-          requestNetworkSwitch();
         } }
       />
     </>
