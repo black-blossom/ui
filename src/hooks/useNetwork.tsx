@@ -1,8 +1,9 @@
 import create from 'zustand';
 
-import { metamask } from './../connectors/metamask';
-import { network } from './../connectors/network';
-import { getAddChainParameters } from './../utils/chains';
+import { getAddChainParameters } from '../utils/chains';
+import { getLocalStorage, setLocalStorage } from '../utils/localstorge';
+import { metamask } from '../connectors/metamask';
+import { network } from '../connectors/network';
 
 interface IAuthStore {
   targetChainId: number;
@@ -13,9 +14,10 @@ interface IAuthStore {
 };
 
 const useNetworkStore = create<IAuthStore>((set, get) => ({
-  targetChainId: 137,
+  targetChainId: getLocalStorage('targetChainId', 137),
 
   setTargetChainId: (chainId) => {
+    setLocalStorage('targetChainId', chainId);
     set({ targetChainId: chainId });
   },
 
