@@ -1,5 +1,7 @@
 import create from 'zustand';
 
+import { getLocalStorage, setLocalStorage } from '../utils/localstorge';
+
 interface IUserData {
   auth: boolean;
   username: string;
@@ -12,11 +14,13 @@ interface IAuthStore {
 };
 
 const useAuthStore = create<IAuthStore>((set) => ({
-  data: {
+  data: getLocalStorage('auth_data', {
     auth: false,
-    username: ''
-  },
+    username: '',
+  }),
+
   authenticate: () => {
+    setLocalStorage('auth_data', { auth: true, username: 'Godyl' });
     set({
       data: { 
         auth: true,
@@ -26,6 +30,7 @@ const useAuthStore = create<IAuthStore>((set) => ({
   },
 
   deauhenticate: () => {
+    setLocalStorage('auth_data', { auth: false, username: '' });
     set({data: { auth: false, username: '' }});
   },
 }));
