@@ -2,7 +2,6 @@ import create from 'zustand';
 
 interface IUserData {
   auth: boolean;
-  address: string;
   username: string;
 };
 
@@ -15,14 +14,19 @@ interface IAuthStore {
 const useAuthStore = create<IAuthStore>((set) => ({
   data: {
     auth: false,
-    address: '',
     username: ''
   },
   authenticate: () => {
-    set({data: { auth: true, address: '0x10628634d540a3b9daa77176b1d68ac875c3213c', username: 'Godyl' }});
+    set({
+      data: { 
+        auth: true,
+        username: 'Godyl'
+      }
+    });
   },
+
   deauhenticate: () => {
-    set({data: { auth: false, address: '', username: '' }});
+    set({data: { auth: false, username: '' }});
   },
 }));
 

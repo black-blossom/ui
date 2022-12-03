@@ -1,19 +1,34 @@
 import {
   Avatar,
+  Badge,
   MenuItem,
   Select,
 } from '@mui/material';
 
 import { CHAINLIST } from '../utils/chains';
-import useNetworkStore from './../hooks/useNetwork';
+import useNetworkStore from '../hooks/useNetwork';
+import { useIsActive, useIsActivating } from '../connectors/network';
 
 // TODO: we need to add a way to change the targetChainId + update network
 const NetworkSelector = () => {
-  const chainId = useNetworkStore(state => state.chainId);
+  const targetChainId = useNetworkStore(state => state.targetChainId);
+  const setTargetChainId = useNetworkStore(state => state.setTargetChainId);
+  const isActive = useIsActive();
+  const isActivating = useIsActivating();
+
+  const getColor = (isActive: boolean, loading: boolean) => {
+    if(isActivating) return 'warning';
+    if(isActive) return 'success';
+    return 'error';
+  }
+
+  const switchNetwork = (chainId: number) => {
+    setTargetChainId(chainId);
+  };
 
   return (
     <Select
-      value={chainId}
+      value={targetChainId}
       size="small"
     >
       {
@@ -23,9 +38,21 @@ const NetworkSelector = () => {
               key={chainId}
               value={chainId}
               disabled={!available}
+              onClick={ () => switchNetwork(chainId) }
               sx={{ justifyContent: 'center' }}
             >
-              <Avatar src={logo} sx={{ width: 20, height: 20 }} />
+              {targetChainId === chainId ? (
+                <Badge
+                  variant="dot"
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  color={ getColor(isActive, isActivating) }
+                >
+                  <Avatar src={logo} sx={{ width: 20, height: 20 }} />
+                </Badge>
+              ) : (
+                <Avatar src={logo} sx={{ width: 20, height: 20 }} />
+              )}
             </MenuItem>
           );
         })

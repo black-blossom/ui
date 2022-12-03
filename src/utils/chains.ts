@@ -59,7 +59,7 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
     name: 'Optimism',
     chainId: 10,
     logo: optimismLogo,
-    available: false,
+    available: true,
     nativeCurrency: ETH,
     blockExplorerUrls: ['https://optimistic.etherscan.io'],
   },
@@ -71,15 +71,14 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
     name: 'Arbitrum One',
     chainId: 42161,
     logo: arbitrumLogo,
-    available: false,
+    available: true,
     nativeCurrency: ETH,
     blockExplorerUrls: ['https://arbiscan.io'],
   },
   // Polygon
   137: {
     urls: [
-      'http://localhost:8545',
-      // 'https://polygon-rpc.com',
+      'https://polygon-rpc.com',
     ],
     name: 'Polygon Mainnet',
     chainId: 137,

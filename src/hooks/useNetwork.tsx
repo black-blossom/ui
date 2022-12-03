@@ -1,38 +1,40 @@
 import create from 'zustand';
-import { Alchemy, Network } from 'alchemy-sdk';
-import { ethers } from 'ethers';
 
 import { metamask } from './../connectors/metamask';
+import { network } from './../connectors/network';
 import { getAddChainParameters } from './../utils/chains';
 
 interface IAuthStore {
-  chainId: number;
-  alchemy: Alchemy | null;
-  rpcProvider: ethers.providers.JsonRpcProvider | ethers.providers.AlchemyProvider | null;
+  targetChainId: number;
 
-  init: () => void;
+  setTargetChainId: (chainId: number) => void;
+  connectNetwork: () => Promise<boolean>;
   connectWallet: () => Promise<boolean>;
 };
 
 const useNetworkStore = create<IAuthStore>((set, get) => ({
-  chainId: 137,
-  alchemy: null,
-  rpcProvider: null,
+  targetChainId: 137,
 
-  init: async () => {
-    const alchemy = new Alchemy({ apiKey: 'demo', network: Network.MATIC_MAINNET });
-    const rpcProvider = new ethers.providers.JsonRpcProvider('http://localhost:8545');
+  setTargetChainId: (chainId) => {
+    set({ targetChainId: chainId });
+  },
 
-    set({
-      alchemy: alchemy,
-      rpcProvider: rpcProvider,
-    });
+  connectNetwork: async () => {
+    let success = true;
+    await network.activate(get().targetChainId)
+      .catch((error) => {
+        console.log(error);
+        success = false;
+      });
+
+    return success;
   },
 
   connectWallet: async () => {
     let success = true;
-    await metamask.activate(getAddChainParameters(get().chainId))
+    await metamask.activate(getAddChainParameters(get().targetChainId))
       .catch((error) => {
+        console.log(error);
         success = false;
       });
 

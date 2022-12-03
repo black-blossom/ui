@@ -1,19 +1,28 @@
 import { Badge } from '@mui/material';
 
-import { useChainId, useIsActive } from '../connectors/metamask';
+import { useChainId, useIsActive, useIsActivating } from '../connectors/metamask';
 import useNetworkStore from '../hooks/useNetwork';
 
 const NetworkStatusBadge = ({ children }: any) => {
-  const appChainId = useNetworkStore(state => state.chainId);
+  const targetChainId = useNetworkStore(state => state.targetChainId);
   const walletChainId = useChainId();
   const isActive = useIsActive();
+  const isActivating = useIsActivating();
+
+  const getColor = (target: number, current: number | undefined, isActive: boolean, loading: boolean) => {
+    const inSync = current && target === current;
+
+    if(loading || !inSync) return 'warning';
+    if(isActive && inSync) return 'success';
+    return 'error';
+  }
 
   return (
     <Badge
       variant="dot"
       overlap="circular"
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      color={appChainId === walletChainId && isActive ? 'success' : 'error'}
+      color={ getColor(targetChainId, walletChainId, isActive, isActivating) }
     >
       {children}
     </Badge>

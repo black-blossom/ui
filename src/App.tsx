@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Redirect, Route, Switch } from 'wouter';
 
 import {
@@ -9,17 +8,12 @@ import {
 
 import darkTheme from './themes/darkTheme';
 import LogoutPage from './pages/LogoutPage'
+import NetworkManager from './components/NetworkManager';
 import SideBar from './components/SideBar';
 import TradePage from './pages/TradePage'
 import TopBar from './components/TopBar';
-import useNetworkStore from './hooks/useNetwork';
 
 const App = () => {
-  const initNetwork = useNetworkStore(state => state.init);
-
-  useEffect(() => {
-    initNetwork();
-  }, []);
 
   return (
     <ThemeProvider theme={darkTheme}>
@@ -83,6 +77,7 @@ const App = () => {
           </Route>
         </Switch>
       </Box>
+      <NetworkManager />
     </ThemeProvider>
   );
 };
