@@ -9,13 +9,15 @@ import {
 } from '@mui/material';
 
 import LoginDialog from './LoginDialog';
-import useAuthStore from './../hooks/useAuth';
-import useNetworkStore from './../hooks/useNetwork';
+import useAuthStore from '../hooks/useAuth';
+import useNetworkStore from '../hooks/useNetwork';
+import { useProvider } from '../connectors/metamask';
 
 const LoginButton = () => {
   const connectWallet = useNetworkStore(state => state.connectWallet);
   const noMetamaskError = useNetworkStore(state => state.noMetamaskError);
   const useAuthenticate = useAuthStore(state => state.authenticate);
+  const provider = useProvider();
   const [openDialog, setOpenDialog] = useState(false);
 
   const handleLogin = useCallback(
@@ -39,8 +41,12 @@ const LoginButton = () => {
       <LoginDialog
         open={openDialog}
         handleCancel={ () => setOpenDialog(false) }
-        handleConfirm={ () => {
-          useAuthenticate();
+        handleConfirm={ async () => {
+          if(!provider) return;
+
+          const signer = provider.getSigner();
+          const success = await useAuthenticate(signer);
+          if(!success) return;
           setOpenDialog(false);
         } }
       />

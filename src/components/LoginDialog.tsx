@@ -15,7 +15,7 @@ import {
   Verified,
 } from '@mui/icons-material'
 
-import metamaskLogo from './../assets/metamask.png';
+import metamaskLogo from '../assets/metamask.png';
 
 interface SignInDialogProps {
   open: boolean;
