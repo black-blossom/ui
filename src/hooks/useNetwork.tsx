@@ -4,9 +4,11 @@ import { getAddChainParameters } from '../utils/chains';
 import { getLocalStorage, setLocalStorage } from '../utils/localstorge';
 import { metamask } from '../connectors/metamask';
 import { network } from '../connectors/network';
+import { NoMetaMaskError } from '@web3-react/metamask';
 
 interface IAuthStore {
   targetChainId: number;
+  noMetamaskError: boolean;
 
   setTargetChainId: (chainId: number) => void;
   connectNetwork: () => Promise<boolean>;
@@ -15,6 +17,7 @@ interface IAuthStore {
 
 const useNetworkStore = create<IAuthStore>((set, get) => ({
   targetChainId: getLocalStorage('targetChainId', 137),
+  noMetamaskError: false,
 
   setTargetChainId: (chainId) => {
     setLocalStorage('targetChainId', chainId);
@@ -36,6 +39,7 @@ const useNetworkStore = create<IAuthStore>((set, get) => ({
     let success = true;
     await metamask.activate(getAddChainParameters(get().targetChainId))
       .catch((error) => {
+        if(error instanceof NoMetaMaskError) set({ noMetamaskError: true });
         console.log(error);
         success = false;
       });
