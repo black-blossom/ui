@@ -1,5 +1,12 @@
 import { useCallback, useState } from 'react';
-import { Button } from '@mui/material';
+import {
+  Alert,
+  Button,
+  Link,
+  Snackbar,
+  Stack,
+  Typography,
+} from '@mui/material';
 
 import LoginDialog from './LoginDialog';
 import useAuthStore from './../hooks/useAuth';
@@ -7,6 +14,7 @@ import useNetworkStore from './../hooks/useNetwork';
 
 const LoginButton = () => {
   const connectWallet = useNetworkStore(state => state.connectWallet);
+  const noMetamaskError = useNetworkStore(state => state.noMetamaskError);
   const useAuthenticate = useAuthStore(state => state.authenticate);
   const [openDialog, setOpenDialog] = useState(false);
 
@@ -24,6 +32,7 @@ const LoginButton = () => {
       <Button
         variant="outlined"
         onClick={handleLogin}
+        disabled={noMetamaskError}
       >
         Login
       </Button>
@@ -35,6 +44,26 @@ const LoginButton = () => {
           setOpenDialog(false);
         } }
       />
+      <Snackbar open={noMetamaskError} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <Alert
+          severity="error"
+          variant="filled"
+        >
+          <Stack direction="row" spacing={8}>
+            <Typography variant="body1">MetaMask wallet required to login</Typography>
+            <Link
+              variant="button"
+              underline="none"
+              color="inherit"
+              href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en"
+              target="_blank"
+              rel="noopener"
+            >
+              Install MetaMask
+            </Link>
+          </Stack>
+        </Alert>
+      </Snackbar>
     </>
   )
 };
