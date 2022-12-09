@@ -1,3 +1,4 @@
+import axios from 'axios';
 import create from 'zustand';
 import { providers } from 'ethers';
 import { SiweMessage } from 'siwe';
@@ -47,6 +48,22 @@ const useAuthStore = create<IAuthStore>((set) => ({
     const signature = await signer.signMessage(message);
 
     // verify message here
+    const res = await axios.post(
+      'http://localhost:8080/verify',
+      {
+        message: message,
+        signature: signature,
+      },
+      {
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded',
+        }
+      }
+    )
+
+    if(res.status !== 200) {
+      return false;
+    }
 
     const data = {
       auth: true,
