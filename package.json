@@ -21,6 +21,7 @@
     "@web3-react/metamask": "^8.0.28-beta.0",
     "@web3-react/network": "^8.0.27-beta.0",
     "alchemy-sdk": "^2.2.3",
+    "axios": "^1.2.1",
     "ethers": "^5.7.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
