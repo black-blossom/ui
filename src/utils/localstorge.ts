@@ -8,3 +8,7 @@ export const setLocalStorage = (key: string, value: any) => {
   if(value === null || value === undefined) return;
   localStorage.setItem(key, JSON.stringify(value));
 };
+
+export const removeLocalStorage = (key: string) => {
+  localStorage.removeItem(key);
+};
