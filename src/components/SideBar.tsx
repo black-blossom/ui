@@ -24,7 +24,7 @@ import SideBarItem from './SideBarItem';
 import useAuthStore from './../hooks/useAuth';
 
 const SideBar = () => {
-  const user = useAuthStore(state => state.data);
+  const auth = useAuthStore(state => state.data);
 
   const topItems = useMemo(() => {
     return [
@@ -106,7 +106,7 @@ const SideBar = () => {
           <Avatar src={logo} sx={{ bgcolor: 'white', width: 40, height: 40, marginBottom: 3 }} />
           {
             topItems.map((item, index: number) => {
-              if(item.authRequired && !user.auth) return;
+              if(item.authRequired && !auth.token) return;
 
               return (
                 <SideBarItem
@@ -123,7 +123,7 @@ const SideBar = () => {
           <Stack direction="column" alignItems="center" sx={{ position: 'absolute', bottom: 16 }}>
             {
               bottomItems.map((item, index: number) => {
-                if(item.authRequired && !user.auth) return;
+                if(item.authRequired && !auth.token) return;
 
                 return (
                   <SideBarItem

@@ -25,6 +25,10 @@ interface SignInDialogProps {
 
 const LoginDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) => {
 
+  const handleClick = () => {
+    handleConfirm();
+  };
+
   return (
     <Dialog open={open}>
       <DialogContent sx={{ maxWidth: 400 }}>
@@ -71,7 +75,7 @@ const LoginDialog = ({ open, handleCancel, handleConfirm }: SignInDialogProps) =
           <Button
             variant="outlined"
             size="small"
-            onClick={ () => handleConfirm() }
+            onClick={handleClick}
             fullWidth
           >
             Sign with Wallet

@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import {
   Alert,
   Button,
@@ -17,38 +17,52 @@ const LoginButton = () => {
   const connectWallet = useNetworkStore(state => state.connectWallet);
   const noMetamaskError = useNetworkStore(state => state.noMetamaskError);
   const useAuthenticate = useAuthStore(state => state.authenticate);
+  const useFirebaseAuth = useAuthStore(state => state.firebaseAuth);
   const provider = useProvider();
-  const [openDialog, setOpenDialog] = useState(false);
 
-  const handleLogin = useCallback(
-    async () => {
-      const connected = await connectWallet();
-      if(!connected) return;
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [loginInProgress, setLoginInProgress] = useState<boolean>(false);
 
-      setOpenDialog(true);
-    }, []
-  );
+  const handleLogin = async () => {
+    setLoginInProgress(true);
+
+    const connected = await connectWallet();
+    if(!connected) return;
+
+    setOpenDialog(true);
+  };
+
+  const handleCancel = () => {
+    setLoginInProgress(false);
+    setOpenDialog(false);
+  };
+
+  const handleConfirm = async () => {
+    if(!provider) return;
+
+    const signer = provider.getSigner();
+    let success = await useAuthenticate(signer);
+    if(!success) return;
+
+    success = await useFirebaseAuth();
+    if(!success) return;
+
+    handleCancel();
+  };
 
   return (
     <>
       <Button
         variant="outlined"
         onClick={handleLogin}
-        disabled={noMetamaskError}
+        disabled={noMetamaskError || loginInProgress}
       >
         Login
       </Button>
       <LoginDialog
         open={openDialog}
-        handleCancel={ () => setOpenDialog(false) }
-        handleConfirm={ async () => {
-          if(!provider) return;
-
-          const signer = provider.getSigner();
-          const success = await useAuthenticate(signer);
-          if(!success) return;
-          setOpenDialog(false);
-        } }
+        handleCancel={handleCancel}
+        handleConfirm={handleConfirm}
       />
       <Snackbar open={noMetamaskError} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
         <Alert

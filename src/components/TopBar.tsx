@@ -11,7 +11,7 @@ import NetworkSelector from './NetworkSelector';
 import useAuthStore from './../hooks/useAuth';
 
 const TopBar = () => {
-  const user = useAuthStore(state => state.data);
+  const auth = useAuthStore(state => state.data);
 
   // TODO: add title of pages here
   return (
@@ -21,7 +21,7 @@ const TopBar = () => {
         <Box sx={{ flexGrow: 1 }} />
         <Stack direction="row" spacing={2}>
           <NetworkSelector />
-          { user.auth ? <AccountBar /> : <LoginButton /> }
+          { auth.token ? <AccountBar /> : <LoginButton /> }
         </Stack>
       </Toolbar>
     </AppBar>

@@ -4,7 +4,7 @@ import { useLocation } from 'wouter';
 import useAuthStore from './../hooks/useAuth';
 
 const LogoutPage = () => {
-  const useDeauthenticate = useAuthStore(state => state.deauhenticate);
+  const useDeauthenticate = useAuthStore(state => state.deauthenticate);
   const [location, setLocation] = useLocation();
 
   useEffect(() => {

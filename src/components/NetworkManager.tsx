@@ -7,12 +7,16 @@ const NetworkManager = () => {
   const targetChainId = useNetworkStore(state => state.targetChainId);
   const connectNetwork = useNetworkStore(state => state.connectNetwork);
   const connectWallet = useNetworkStore(state => state.connectWallet);
-  const { auth } = useAuthStore(state => state.data);
+  const { token } = useAuthStore(state => state.data);
+  const firebaseAuth = useAuthStore(state => state.firebaseAuth);
 
   useEffect(() => {
     connectNetwork();
-    if(auth) connectWallet();
-  }, [auth, targetChainId]);
+    if(token) {
+      connectWallet();
+      firebaseAuth();
+    }
+  }, [targetChainId]);
 
   return <></>
 }
