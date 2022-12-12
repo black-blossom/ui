@@ -1,18 +1,25 @@
 import {
   Card,
-  Stack,
+  Grid,
 } from '@mui/material';
 
-import TVChart from './../components/TVChart';
+import PositionCard from '../components/PositionCard';
+import TVChart from '../components/TVChart';
 
 const TradePage = () => {
 
   return (
-    <Stack direction="column" alignItems="center">
-      <Card variant="outlined" sx={{ width: 1 }}>
-        <TVChart />
-      </Card>
-    </Stack>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <Card variant="outlined" sx={{ width: 1 }}>
+          <TVChart />
+        </Card>
+      </Grid>
+
+      <Grid item xs={12}>
+        <PositionCard />
+      </Grid>
+    </Grid>
   );
 };
 
