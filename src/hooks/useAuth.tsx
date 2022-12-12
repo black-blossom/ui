@@ -2,7 +2,7 @@ import axios from 'axios';
 import create from 'zustand';
 import { providers } from 'ethers';
 import { SiweMessage } from 'siwe';
-import { getAuth, signInWithCustomToken, signOut } from 'firebase/auth';
+import { getAuth, signInWithCustomToken, signOut, updateProfile } from 'firebase/auth';
 
 import firebaseApp from '../utils/firebase';
 import { getLocalStorage, removeLocalStorage, setLocalStorage } from '../utils/localstorge';
@@ -38,6 +38,7 @@ interface IAuthStore {
   authenticate: (signer: providers.JsonRpcSigner) => Promise<boolean>;
   deauthenticate: () => void;
   firebaseAuth: () => Promise<boolean>;
+  setDisplayName: (name: string) => void;
 };
 
 const useAuthStore = create<IAuthStore>((set, get) => ({
@@ -111,6 +112,14 @@ const useAuthStore = create<IAuthStore>((set, get) => ({
     console.log(getAuth(firebaseApp).currentUser);
 
     return success;
+  },
+
+  setDisplayName: (name) => {
+    const auth = getAuth(firebaseApp);
+    if(!auth.currentUser) return;
+
+    console.log('updating name');
+    updateProfile(auth.currentUser, { displayName: name });
   },
 }));
 
