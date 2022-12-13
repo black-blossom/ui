@@ -61,7 +61,7 @@ const PositionCard = ({ position }: IPositionCardProps) => {
   const LT = 0.825;
 
   return (
-    <ImageCard image='/card-images/blossoming-tree.gif'>
+    <ImageCard image='/card-images/regular-tree.gif'>
       <Stack direction="row" alignItems="center" spacing={2}>
         <Badge
           overlap="circular"

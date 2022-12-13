@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import Chart from '@qognicafinance/react-lightweight-charts';
-import { Paper } from '@mui/material';
+import { Card, Paper } from '@mui/material';
 
 import useHlocPrices from '../hooks/useHlocPrices';
 
@@ -58,15 +58,17 @@ const TVChart = () => {
   }, []);
 
   return (
-    <Paper elevation={0} sx={{ marginLeft: 2, marginRight: 2, marginBottom: 2 }}>
-      <Chart
-        options={options}
-        candlestickSeries={data}
-        darkTheme={true}
-        autoWidth
-        height={320}
-      />
-    </Paper>
+    <Card variant="outlined" sx={{ width: 1 }}>
+      <Paper elevation={0} sx={{ m: 2 }}>
+        <Chart
+          options={options}
+          candlestickSeries={data}
+          darkTheme={true}
+          autoWidth
+          height={320}
+        />
+      </Paper>
+    </Card>
   );
 };
 
