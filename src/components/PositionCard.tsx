@@ -139,8 +139,17 @@ interface IImageCardProps {
 const ImageCard = ({ children, image }: IImageCardProps) => {
 
   return (
-    <Paper elevation={0} sx={{ width: 1, backgroundImage: `url(${image})`, backgroundRepeat: 'no-repeat', backgroundSize: 'cover' }}>
-      <Box sx={{ p: 1, width: 1, height: '100%', backgroundColor: '#000000bb' }}>
+    <Paper
+      elevation={0}
+      sx={{
+        width: 1,
+        borderRadius: 1,
+        backgroundImage: `url(${image})`,
+        backgroundRepeat: 'no-repeat', 
+        backgroundSize: 'cover'
+      }}
+    >
+      <Box sx={{ p: 1, width: 1, borderRadius: 1, height: '100%', backgroundColor: '#000000bb' }}>
         {children}
       </Box>
     </Paper>
