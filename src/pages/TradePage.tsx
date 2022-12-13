@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import {
-  Avatar,
-  Badge,
   Container,
   Grid,
+  SelectChangeEvent,
   Stack,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
 } from '@mui/material';
 
+import PairSelector from '../components/PairSelector';
 import PositionCard from '../components/PositionCard';
 import TVChart from '../components/TVChart';
 
@@ -17,8 +17,8 @@ const TradePage = () => {
   const [pair, setPair] = useState<string>('WETH/USDC');
   const [interval, setInterval] = useState<string>('1h');
 
-  const handlePairChanged = (event: React.MouseEvent<HTMLElement>, newPair: string | null) => {
-    if(newPair) setPair(newPair);
+  const handlePairChanged = (event: SelectChangeEvent) => {
+    setPair(event.target.value);
   };
 
   const handleIntervalChanged = (event: React.MouseEvent<HTMLElement>, newInterval: string | null) => {
@@ -30,45 +30,7 @@ const TradePage = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <ToggleButtonGroup
-              value={pair}
-              onChange={handlePairChanged}
-              exclusive
-            >
-              <ToggleButton value="WETH/USDC">
-                <Badge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  badgeContent={
-                    <Avatar src="/token-images/usdc.png" style={{ width: 14, height: 14 }} />
-                  }
-                >
-                  <Avatar src="/token-images/weth.png" sx={{ width: 28, height: 28 }} />
-                </Badge>
-              </ToggleButton>
-              <ToggleButton value="WBTC/USDC">
-                <Badge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  badgeContent={
-                    <Avatar src="/token-images/usdc.png" style={{ width: 14, height: 14 }} />
-                  }
-                >
-                  <Avatar src="/token-images/wbtc.png" sx={{ width: 28, height: 28 }} />
-                </Badge>
-              </ToggleButton>
-              <ToggleButton value="WETH/WBTC">
-                <Badge
-                  overlap="circular"
-                  anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                  badgeContent={
-                    <Avatar src="/token-images/wbtc.png" style={{ width: 14, height: 14 }} />
-                  }
-                >
-                  <Avatar src="/token-images/weth.png" sx={{ width: 28, height: 28 }} />
-                </Badge>
-              </ToggleButton>
-            </ToggleButtonGroup>
+            <PairSelector selected={pair} onChange={handlePairChanged} />
 
             <Stack direction="column" alignItems="center">
               <Typography variant="caption">Market Price</Typography>
@@ -85,10 +47,18 @@ const TradePage = () => {
               onChange={handleIntervalChanged}
               exclusive
             >
-              <ToggleButton value="1h">1h</ToggleButton>
-              <ToggleButton value="4h">4h</ToggleButton>
-              <ToggleButton value="1d">1d</ToggleButton>
-              <ToggleButton value="3d">3d</ToggleButton>
+              <ToggleButton value="1h">
+                <Typography variant="body2">1h</Typography>
+              </ToggleButton>
+              <ToggleButton value="4h">
+                <Typography variant="body2">4h</Typography>
+              </ToggleButton>
+              <ToggleButton value="1d">
+                <Typography variant="body2">1d</Typography>
+              </ToggleButton>
+              <ToggleButton value="3d">
+                <Typography variant="body2">3d</Typography>
+              </ToggleButton>
             </ToggleButtonGroup>
           </Stack>
         </Grid>
