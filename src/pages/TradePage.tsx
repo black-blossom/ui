@@ -4,11 +4,10 @@ import {
   Grid,
   SelectChangeEvent,
   Stack,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography,
 } from '@mui/material';
 
+import IntervalButtonGroup from '../components/IntervalButtonGroup';
 import PairSelector from '../components/PairSelector';
 import PositionCard from '../components/PositionCard';
 import TVChart from '../components/TVChart';
@@ -42,24 +41,7 @@ const TradePage = () => {
               <Typography variant="body2" color="palevioletred">-1.05%</Typography>
             </Stack>
 
-            <ToggleButtonGroup
-              value={interval}
-              onChange={handleIntervalChanged}
-              exclusive
-            >
-              <ToggleButton value="1h">
-                <Typography variant="body2">1h</Typography>
-              </ToggleButton>
-              <ToggleButton value="4h">
-                <Typography variant="body2">4h</Typography>
-              </ToggleButton>
-              <ToggleButton value="1d">
-                <Typography variant="body2">1d</Typography>
-              </ToggleButton>
-              <ToggleButton value="3d">
-                <Typography variant="body2">3d</Typography>
-              </ToggleButton>
-            </ToggleButtonGroup>
+            <IntervalButtonGroup selected={interval} onChange={handleIntervalChanged} />
           </Stack>
         </Grid>
 
