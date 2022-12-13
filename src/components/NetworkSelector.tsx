@@ -3,7 +3,9 @@ import {
   Badge,
   MenuItem,
   Select,
+  SelectChangeEvent,
 } from '@mui/material';
+import { ExpandMore } from '@mui/icons-material';
 
 import { CHAINLIST } from '../utils/chains';
 import useNetworkStore from '../hooks/useNetwork';
@@ -17,19 +19,24 @@ const NetworkSelector = () => {
   const isActivating = useIsActivating();
 
   const getColor = (isActive: boolean, loading: boolean) => {
-    if(isActivating) return 'warning';
+    if(loading) return 'warning';
     if(isActive) return 'success';
     return 'error';
   }
 
-  const switchNetwork = (chainId: number) => {
-    setTargetChainId(chainId);
+  const handleNetworkChanged = (event: SelectChangeEvent<number>) => {
+    const value = event.target.value;
+    const newInterval = typeof(value) == 'number' ? value : parseInt(value);
+    setTargetChainId(newInterval);
   };
 
   return (
     <Select
       value={targetChainId}
       size="small"
+      onChange={handleNetworkChanged}
+      IconComponent={ExpandMore}
+      sx={{ minWidth: 72 }}
     >
       {
         CHAINLIST.map(({ chainId, logo, available }) => {
@@ -38,7 +45,6 @@ const NetworkSelector = () => {
               key={chainId}
               value={chainId}
               disabled={!available}
-              onClick={ () => switchNetwork(chainId) }
               sx={{ justifyContent: 'center' }}
             >
               {targetChainId === chainId ? (
