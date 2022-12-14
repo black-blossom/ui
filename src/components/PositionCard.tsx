@@ -149,7 +149,7 @@ const ImageCard = ({ children, image }: IImageCardProps) => {
         backgroundSize: 'cover'
       }}
     >
-      <Box sx={{ p: 1, width: 1, borderRadius: 1, height: '100%', backgroundColor: '#000000bb' }}>
+      <Box sx={{ p: 2, width: 1, borderRadius: 1, height: '100%', backgroundColor: '#000000bb' }}>
         {children}
       </Box>
     </Paper>
