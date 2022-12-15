@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 
 import IntervalButtonGroup from '../components/IntervalButtonGroup';
+import OpenPositionCard from '../components/OpenPositionCard';
 import PairSelector from '../components/PairSelector';
 import PositionCard from '../components/PositionCard';
 import TVChart from '../components/TVChart';
@@ -47,6 +48,10 @@ const TradePage = () => {
 
         <Grid item xs={12}>
           <TVChart />
+        </Grid>
+
+        <Grid item xs={12}>
+          <OpenPositionCard pair={pair} />
         </Grid>
 
         <Grid item xs={12} md={6} lg={4}>
