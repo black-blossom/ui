@@ -16,6 +16,9 @@ import {
 } from '@mui/material';
 import { TrendingDown, TrendingUp } from '@mui/icons-material';
 
+import { PAIRS } from '../utils/pairs';
+import { useChainId } from '../connectors/network';
+
 const LONG  = 'LONG';
 const SHORT = 'SHORT';
 
@@ -55,10 +58,11 @@ interface IOpenPositionCardProps {
 };
 
 const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
+  const chainId = useChainId();
   // TODO: these should be hooks that actually work
   const getPrice = (pair: string) => {
-    if(pair === 'WETH/USDC') return 1288.22;
-    if(pair === 'WBTC/USDC') return 16683.84;
+    if(pair === 'ETH/USD') return 1288.22;
+    if(pair === 'BTC/USD') return 16683.84;
   };
 
   const [tradeType, setTradeType] = useState<string>(LONG);
@@ -198,13 +202,13 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
               badgeContent={
                 <Avatar
-                  src={`/token-images/${pair.split('/')[1].toLowerCase()}.png`}
+                  src={PAIRS[chainId ? chainId : 137][pair].token1.logoSrc}
                   sx={{ width: 16, height: 16, bgcolor: 'white' }} 
                 />
               }
             >
               <Avatar
-                src={`/token-images/${pair.split('/')[0].toLowerCase()}.png`}
+                src={PAIRS[chainId ? chainId : 137][pair].token0.logoSrc}
                 sx={{ width: 36, height: 36, bgcolor: 'white' }}
               />
             </Badge>

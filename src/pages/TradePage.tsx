@@ -14,7 +14,7 @@ import PositionCard from '../components/PositionCard';
 import TVChart from '../components/TVChart';
 
 const TradePage = () => {
-  const [pair, setPair] = useState<string>('WETH/USDC');
+  const [pair, setPair] = useState<string>('ETH/USD');
   const [interval, setInterval] = useState<string>('1h');
 
   const handlePairChanged = (event: SelectChangeEvent) => {
