@@ -1,6 +1,11 @@
 import { ETH, BTC, USDC, MATIC, Token } from './tokens';
 
-export const PAIRS: { [chainId: number]: { [pairName: string]: { token0: Token, token1: Token } } } = {
+export interface TokenPair {
+  token0: Token;
+  token1: Token;
+};
+
+export const PAIRS: { [chainId: number]: { [pairName: string]: TokenPair } } = {
   10: {
     "ETH/USD": { token0: ETH[10], token1: USDC[10] },
     "BTC/USD": { token0: BTC[10], token1: USDC[10] },
