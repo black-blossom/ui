@@ -18,6 +18,7 @@ import { TrendingDown, TrendingUp } from '@mui/icons-material';
 
 import { PAIRS } from '../utils/pairs';
 import { useChainId } from '../connectors/network';
+import usePrice from '../hooks/usePrice';
 
 const LONG  = 'LONG';
 const SHORT = 'SHORT';
@@ -59,11 +60,7 @@ interface IOpenPositionCardProps {
 
 const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
   const chainId = useChainId();
-  // TODO: these should be hooks that actually work
-  const getPrice = (pair: string) => {
-    if(pair === 'ETH/USD') return 1288.22;
-    if(pair === 'BTC/USD') return 16683.84;
-  };
+  const tokenPair = PAIRS[chainId ? chainId : 137][pair];
 
   const [tradeType, setTradeType] = useState<string>(LONG);
   // const [payAmt, setPayAmt] = useState<number>(0);
@@ -202,17 +199,17 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
               badgeContent={
                 <Avatar
-                  src={PAIRS[chainId ? chainId : 137][pair].token1.logoSrc}
+                  src={tokenPair.token1.logoSrc}
                   sx={{ width: 16, height: 16, bgcolor: 'white' }} 
                 />
               }
             >
               <Avatar
-                src={PAIRS[chainId ? chainId : 137][pair].token0.logoSrc}
+                src={tokenPair.token0.logoSrc}
                 sx={{ width: 36, height: 36, bgcolor: 'white' }}
               />
             </Badge>
-            <Typography variant="body2">{tradeType} {pair}</Typography>
+            <Typography variant="body2">{tradeType} {`${tokenPair.token0.symbol}/${tokenPair.token1.symbol}`}</Typography>
           </Stack>
 
           <Box sx={{ m: 3 }} />
@@ -244,7 +241,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Entry Price</Typography>
-                <Typography variant="body2">{getPrice(pair)}</Typography>
+                <Typography variant="body2">{usePrice(pair)}</Typography>
               </Stack>
             </Grid>
 
