@@ -18,7 +18,7 @@ import { TrendingDown, TrendingUp } from '@mui/icons-material';
 
 import { PAIRS } from '../utils/pairs';
 import { useChainId } from '../connectors/network';
-import usePrice from '../hooks/usePrice';
+import getPrice from '../utils/getPrice';
 
 const LONG  = 'LONG';
 const SHORT = 'SHORT';
@@ -28,6 +28,7 @@ const PROTOCOL_FEE = 0.001;
 const FLASHLOAN_FEE = 0.009;
 
 interface IOpennfo {
+  price?: number;
   pair?: string;
   tradeType?: string;
   payAmt?: number;
@@ -35,23 +36,25 @@ interface IOpennfo {
 };
 
 interface IPositionInfo {
-  fundAmt: number;
-  cAmt   : number;
-  dAmt   : number;
-  pFee   : number;
-  zFee   : number;
-  sFee   : number;
-  fFee   : number;
+  entryPrice: number;
+  fundAmt   : number;
+  cAmt      : number;
+  dAmt      : number;
+  pFee      : number;
+  zFee      : number;
+  sFee      : number;
+  fFee      : number;
 };
 
 const defaultPositionInfo: IPositionInfo = {
-  fundAmt: 0,
-  cAmt   : 0,
-  dAmt   : 0,
-  pFee   : 0,
-  zFee   : 0,
-  sFee   : 0,
-  fFee   : 0,
+  entryPrice: 0,
+  fundAmt   : 0,
+  cAmt      : 0,
+  dAmt      : 0,
+  pFee      : 0,
+  zFee      : 0,
+  sFee      : 0,
+  fFee      : 0,
 };
 
 interface IOpenPositionCardProps {
@@ -62,12 +65,31 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
   const chainId = useChainId();
   const tokenPair = PAIRS[chainId ? chainId : 137][pair];
 
+  const [price, setPrice] = useState<number>(0);
   const [tradeType, setTradeType] = useState<string>(LONG);
   // const [payAmt, setPayAmt] = useState<number>(0);
   const [payAmt, setPayAmt] = useState<number>(1000);
   const [leverageMult, setLeverageMult] = useState<number>(2);
 
   const [positionInfo, setPositionInfo] = useState<IPositionInfo>(defaultPositionInfo);
+
+  useEffect(() => {
+    if(chainId === undefined) return;
+
+    const fetchPrice = async () => {
+      const price = await getPrice(pair, chainId);
+      simulatePosition({ price: price });
+      setPrice(price);
+    };
+
+    fetchPrice();
+
+    // sub
+    const updatePrice = window.setInterval(() => fetchPrice(), 5000);
+
+    // unsub
+    return () => clearInterval(updatePrice);
+  }, [pair, chainId]);
 
   useEffect(() => {
     simulatePosition({ pair: pair });
@@ -94,11 +116,14 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     setLeverageMult(value);
   };
 
-  const simulatePosition = (opi: IOpennfo) => {
+  const simulatePosition = async (opi: IOpennfo) => {
+    opi.price = opi.price !== undefined ? opi.price : price;
     opi.pair = opi.pair !== undefined ? opi.pair : pair;
     opi.tradeType = opi.tradeType !== undefined ? opi.tradeType : tradeType;
     opi.payAmt = opi.payAmt !== undefined ? opi.payAmt : payAmt;
     opi.leverageMult = opi.leverageMult !== undefined ? opi.leverageMult : leverageMult;
+
+    const entryPrice = opi.price;
 
     // calcualte the funding amount
     let fundAmt = opi.payAmt;
@@ -120,13 +145,14 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     cAmt += (dAmt - swapFee);
 
     setPositionInfo({
-      fundAmt: fundAmt,
-      cAmt   : cAmt,
-      dAmt   : dAmt,
-      pFee   : protocolFee,
-      zFee   : zapFee,
-      sFee   : swapFee,
-      fFee   : flashloanFee,
+      entryPrice: entryPrice,
+      fundAmt   : fundAmt,
+      cAmt      : cAmt,
+      dAmt      : dAmt,
+      pFee      : protocolFee,
+      zFee      : zapFee,
+      sFee      : swapFee,
+      fFee      : flashloanFee,
     });
   };
 
@@ -241,7 +267,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Entry Price</Typography>
-                <Typography variant="body2">{usePrice(pair)}</Typography>
+                <Typography variant="body2">{positionInfo.entryPrice}</Typography>
               </Stack>
             </Grid>
 
