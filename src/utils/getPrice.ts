@@ -6,21 +6,32 @@ import { Token as UniswapToken } from '@uniswap/sdk-core';
 import { network } from '../connectors/network';
 import { PAIRS, TokenPair } from '../utils/pairs';
 
-const address : { [pairName: string]: string } = {
-  'ETH/USD': '0x45dDa9cb7c25131DF268515131f647d726f50608',
-  'BTC/USD': '0x847b64f9d3A95e977D157866447a5C0A5dFa0Ee5',
-  'ETH/BTC': '0x50eaEDB835021E4A108B7290636d62E9765cc6d7',
-  'MATIC/USD': '0xA374094527e1673A86dE625aa59517c5dE346d32',
-  'MATIC/ETH': '0x86f1d8390222A3691C28938eC7404A1661E618e0',
-  'MATIC/BTC': '0x642F28a89fa9d0Fa30e664F71804Bfdd7341D21f',
+const address : { [chainId: string]: { [pairName: string]: string  } } = {
+  10: {
+    'ETH/USD': '0x85149247691df622eaF1a8Bd0CaFd40BC45154a9',
+    'BTC/USD': '0x6168EC836D0b1f0c37381eC7eD1891a412872121',
+    'ETH/BTC': '0x73B14a78a0D396C521f954532d43fd5fFe385216',
+  },
+  137: {
+    'ETH/USD': '0x45dDa9cb7c25131DF268515131f647d726f50608',
+    'BTC/USD': '0x847b64f9d3A95e977D157866447a5C0A5dFa0Ee5',
+    'ETH/BTC': '0x50eaEDB835021E4A108B7290636d62E9765cc6d7',
+    'MATIC/USD': '0xA374094527e1673A86dE625aa59517c5dE346d32',
+    'MATIC/ETH': '0x86f1d8390222A3691C28938eC7404A1661E618e0',
+    'MATIC/BTC': '0x642F28a89fa9d0Fa30e664F71804Bfdd7341D21f',
+  },
+  42161: {
+    'ETH/USD': '0xC31E54c7a869B9FcBEcc14363CF510d1c41fa443',
+    'BTC/USD': '0xA62aD78825E3a55A77823F00Fe0050F567c1e4EE',
+    'ETH/BTC': '0x2f5e87C9312fa29aed5c179E456625D79015299c',
+  },
 };
 
-// TODO: get contract address for pair based on chainId
 const getPrice = async (pair: string, chainId: number | undefined): Promise<number> => {
   if(chainId === undefined || network.customProvider === undefined) return 0;
 
   const tokenPair = PAIRS[chainId ? chainId : 137][pair];
-  const contract = new ethers.Contract(address[pair], IUniswapV3PoolABI, network.customProvider);
+  const contract = new ethers.Contract(address[chainId][pair], IUniswapV3PoolABI, network.customProvider);
 
   let [sqrtPriceX96, tick] = await contract.slot0();
   const token0 = await contract.token0();
