@@ -33,10 +33,17 @@ const getPrice = async (pair: string, chainId: number | undefined): Promise<numb
   const tokenPair = PAIRS[chainId ? chainId : 137][pair];
   const contract = new ethers.Contract(address[chainId][pair], IUniswapV3PoolABI, network.customProvider);
 
-  let [sqrtPriceX96, tick] = await contract.slot0();
-  const token0 = await contract.token0();
-  const fee = await contract.fee();
-  const liquidity = await contract.liquidity();
+  const result = await Promise.all([
+    contract.slot0(),
+    contract.token0(),
+    contract.fee(),
+    contract.liquidity(),
+  ]);
+
+  const [sqrtPriceX96, tick] = result[0];
+  const token0 = result[1];
+  const fee = result[2];
+  const liquidity = result[3];
   const match = tokenPair.token0.address === token0;
 
   let tokenA;
