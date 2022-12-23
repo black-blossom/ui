@@ -16,7 +16,8 @@ import {
 } from '@mui/material';
 import { TrendingDown, TrendingUp } from '@mui/icons-material';
 
-import { PAIRS } from '../utils/pairs';
+import { USDC, Token } from '../utils/tokens';
+import { PAIRS, TokenPair } from '../utils/pairs';
 import { useChainId } from '../connectors/network';
 import getPrice from '../utils/getPrice';
 
@@ -27,34 +28,41 @@ const UNISWAP_FEE = 0.005;
 const PROTOCOL_FEE = 0.001;
 const FLASHLOAN_FEE = 0.009;
 
-interface IOpennfo {
-  price?: number;
-  pair?: string;
-  tradeType?: string;
-  payAmt?: number;
-  leverageMult?: number;
+interface OpenInfo {
+  pair?: string
+  price?: number
+  tradeType?: string
+
+  token0Price?: number
+  token1Price?: number
+
+  fundingAmount?: number
+  fundingToken?: Token
+
+  leverageMultiplier?: number;
 };
 
-interface IPositionInfo {
-  entryPrice: number;
-  fundAmt   : number;
-  cAmt      : number;
-  dAmt      : number;
-  pFee      : number;
-  zFee      : number;
-  sFee      : number;
-  fFee      : number;
-};
+interface PositionInfo {
+  tokenPair: TokenPair
+  tradeType: string
+  entryPrice: number
 
-const defaultPositionInfo: IPositionInfo = {
-  entryPrice: 0,
-  fundAmt   : 0,
-  cAmt      : 0,
-  dAmt      : 0,
-  pFee      : 0,
-  zFee      : 0,
-  sFee      : 0,
-  fFee      : 0,
+  fundingToken: Token
+  collateralToken: Token
+  debtToken: Token
+
+  fundingUsd: number
+  fundingAmount: number
+
+  collateralUsd: number
+  collateralAmount: number
+
+  debtUsd: number
+  debtAmount: number
+
+  feeZap: number
+  feeSwap: number
+  feeProtocol: number
 };
 
 interface IOpenPositionCardProps {
@@ -63,37 +71,77 @@ interface IOpenPositionCardProps {
 
 const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
   const chainId = useChainId();
-  const tokenPair = PAIRS[chainId ? chainId : 137][pair];
 
   const [price, setPrice] = useState<number>(0);
   const [tradeType, setTradeType] = useState<string>(LONG);
-  // const [payAmt, setPayAmt] = useState<number>(0);
-  const [payAmt, setPayAmt] = useState<number>(1000);
-  const [leverageMult, setLeverageMult] = useState<number>(2);
 
-  const [positionInfo, setPositionInfo] = useState<IPositionInfo>(defaultPositionInfo);
+  const [token0Price, setToken0Price] = useState<number>(0);
+  const [token1Price, setToken1Price] = useState<number>(0);
+
+  const [payAmt, setPayAmt] = useState<number>(0);
+  const fundingToken = USDC[chainId ? chainId : 137];
+
+  const [leverageMultiplier, setLeverageMultiplier] = useState<number>(2);
+
+  const [positionInfo, setPositionInfo] = useState<PositionInfo>({
+    tokenPair: PAIRS[chainId ? chainId : 137][pair],
+    tradeType: tradeType,
+    entryPrice: price,
+
+    fundingToken: fundingToken,
+    collateralToken: fundingToken,
+    debtToken: fundingToken,
+
+    fundingUsd: 0,
+    fundingAmount: 0,
+
+    collateralUsd: 0,
+    collateralAmount: 0,
+
+    debtUsd: 0,
+    debtAmount: 0,
+
+    feeZap: 0,
+    feeSwap: 0,
+    feeProtocol: 0,
+  });
 
   useEffect(() => {
     if(chainId === undefined) return;
 
-    const fetchPrice = async () => {
-      const price = await getPrice(pair, chainId);
-      simulatePosition({ price: price });
-      setPrice(price);
+    const fetchPrices = async () => {
+      // fetch pair price, token0 usd price and token1 usd price
+      const prices = await Promise.all([
+        getPrice(pair, chainId),
+        getPrice(`${pair.split('/')[0]}/USD`, chainId),
+        getPrice(`${pair.split('/')[1]}/USD`, chainId),
+      ]);
+
+      setPrice(prices[0]);
+      setToken0Price(prices[1]);
+      setToken1Price(prices[2]);
     };
 
-    fetchPrice();
+    fetchPrices();
 
     // sub
-    const updatePrice = window.setInterval(() => fetchPrice(), 5000);
+    const updatePrices = window.setInterval(() => fetchPrices(), 5000);
 
     // unsub
-    return () => clearInterval(updatePrice);
+    return () => clearInterval(updatePrices);
   }, [pair, chainId]);
 
   useEffect(() => {
     simulatePosition({ pair: pair });
   }, [pair]);
+
+  useEffect(() => {
+    simulatePosition({
+      price: price,
+      token0Price: token0Price,
+      token1Price: token1Price,
+    });
+  }, [price, token0Price, token1Price]);
 
   const handleTradeTypeChanged = (event: React.MouseEvent<HTMLElement, MouseEvent>, value: any) => {
     if(!value) return;
@@ -105,54 +153,81 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
   const handlePayAmtInputChanged = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const value = Number(event.target.value);
 
-    simulatePosition({ payAmt: value });
+    simulatePosition({ fundingAmount: value });
     setPayAmt(value);
   };
 
   const handleLeverageChanged = (event: Event, value: number | number[], activeThumb: number) => {
-    if(typeof(value) !== 'number' || leverageMult === value) return;
+    if(typeof(value) !== 'number' || leverageMultiplier === value) return;
 
-    simulatePosition({ leverageMult: value });
-    setLeverageMult(value);
+    simulatePosition({ leverageMultiplier: value });
+    setLeverageMultiplier(value);
   };
 
-  const simulatePosition = async (opi: IOpennfo) => {
-    opi.price = opi.price !== undefined ? opi.price : price;
-    opi.pair = opi.pair !== undefined ? opi.pair : pair;
-    opi.tradeType = opi.tradeType !== undefined ? opi.tradeType : tradeType;
-    opi.payAmt = opi.payAmt !== undefined ? opi.payAmt : payAmt;
-    opi.leverageMult = opi.leverageMult !== undefined ? opi.leverageMult : leverageMult;
+  const simulatePosition = async (openInfo: OpenInfo) => {
+    if(!chainId) return;
 
-    const entryPrice = opi.price;
+    if(openInfo.pair      === undefined) openInfo.pair      = pair;
+    if(openInfo.price     === undefined) openInfo.price     = price;
+    if(openInfo.tradeType === undefined) openInfo.tradeType = tradeType;
 
-    // calcualte the funding amount
-    let fundAmt = opi.payAmt;
+    if(openInfo.token0Price === undefined) openInfo.token0Price = token0Price;
+    if(openInfo.token1Price === undefined) openInfo.token1Price = token1Price;
 
-    const protocolFee = fundAmt * PROTOCOL_FEE;
-    fundAmt -= protocolFee;
+    if(openInfo.fundingAmount === undefined) openInfo.fundingAmount = payAmt;
+    if(openInfo.fundingToken  === undefined) openInfo.fundingToken  = fundingToken;
 
-    const zapFee = fundAmt * UNISWAP_FEE;
-    fundAmt -= zapFee;
+    if(openInfo.leverageMultiplier === undefined) openInfo.leverageMultiplier = leverageMultiplier;
 
-    // calculate collateral and debt amounts
-    const flashloan = fundAmt * (opi.leverageMult - 1);
+    const tokenPair = PAIRS[chainId][openInfo.pair];
+    const collateralToken = openInfo.tradeType === LONG ? tokenPair.token0 : tokenPair.token1;
+    const debtToken       = openInfo.tradeType === LONG ? tokenPair.token1 : tokenPair.token0;
+
+    const collateralPriceUsd = openInfo.tradeType === LONG ? openInfo.token0Price : openInfo.token1Price;
+    const debtPriceUsd       = openInfo.tradeType === LONG ? openInfo.token1Price : openInfo.token0Price;
+
+    let amountUsd = openInfo.fundingAmount;
+
+    const protocolFee = amountUsd * PROTOCOL_FEE;
+    amountUsd -= protocolFee;
+
+    const zapFee = amountUsd * UNISWAP_FEE;
+    amountUsd -= zapFee;
+
+    let collateralAmount = amountUsd / collateralPriceUsd;
+
+    // flashloan should include protocolFee, zapFee, and an estimation of swapFee
+    let flashloan = openInfo.fundingAmount * (openInfo.leverageMultiplier - 1) + zapFee + protocolFee;
+    let swapFee = flashloan * UNISWAP_FEE;
+    flashloan += swapFee;
+    swapFee = flashloan * UNISWAP_FEE;
     const flashloanFee = flashloan * FLASHLOAN_FEE;
 
-    let cAmt = fundAmt;
-    let dAmt = flashloan - flashloanFee;
+    collateralAmount += (flashloan - swapFee) / collateralPriceUsd;
 
-    const swapFee = dAmt * UNISWAP_FEE;
-    cAmt += (dAmt - swapFee);
+    const debtAmount = flashloan + flashloanFee;
 
     setPositionInfo({
-      entryPrice: entryPrice,
-      fundAmt   : fundAmt,
-      cAmt      : cAmt,
-      dAmt      : dAmt,
-      pFee      : protocolFee,
-      zFee      : zapFee,
-      sFee      : swapFee,
-      fFee      : flashloanFee,
+      tokenPair: tokenPair,
+      tradeType: openInfo.tradeType,
+      entryPrice: openInfo.price,
+
+      fundingToken: openInfo.fundingToken,
+      collateralToken: collateralToken,
+      debtToken: debtToken,
+
+      fundingUsd: openInfo.fundingAmount,
+      fundingAmount: openInfo.fundingAmount,
+
+      collateralUsd: collateralAmount * collateralPriceUsd,
+      collateralAmount: collateralAmount,
+
+      debtUsd: debtAmount * debtPriceUsd,
+      debtAmount: debtAmount,
+
+      feeZap: zapFee,
+      feeSwap: swapFee,
+      feeProtocol: protocolFee,
     });
   };
 
@@ -200,11 +275,11 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
 
             <Stack direction="row" alignItems="center" justifyContent="space-between">
               <Typography variant="body2">Leverage Multiplier</Typography>
-              <Typography variant="body2">{`${leverageMult.toFixed(1)}x`}</Typography>
+              <Typography variant="body2">{`${leverageMultiplier.toFixed(1)}x`}</Typography>
             </Stack>
 
             <Slider
-              value={leverageMult}
+              value={leverageMultiplier}
               onChange={handleLeverageChanged}
               size="small"
               step={0.1}
@@ -225,17 +300,17 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
               badgeContent={
                 <Avatar
-                  src={tokenPair.token1.logoSrc}
+                  src={positionInfo.tokenPair.token1.logoSrc}
                   sx={{ width: 16, height: 16, bgcolor: 'white' }} 
                 />
               }
             >
               <Avatar
-                src={tokenPair.token0.logoSrc}
+                src={positionInfo.tokenPair.token0.logoSrc}
                 sx={{ width: 36, height: 36, bgcolor: 'white' }}
               />
             </Badge>
-            <Typography variant="body2">{tradeType} {`${tokenPair.token0.symbol}/${tokenPair.token1.symbol}`}</Typography>
+            <Typography variant="body2">{tradeType} {`${positionInfo.tokenPair.token0.symbol}/${positionInfo.tokenPair.token1.symbol}`}</Typography>
           </Stack>
 
           <Box sx={{ m: 3 }} />
@@ -244,22 +319,22 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Funding</Typography>
-                <Typography variant="body2">{positionInfo.fundAmt.toFixed(2)}</Typography>
+                <Typography variant="body2">{positionInfo.fundingUsd.toFixed(0)}</Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Position Size</Typography>
-                <Typography variant="body2">{positionInfo.cAmt.toFixed(2)}</Typography>
+                <Typography variant="body2">{positionInfo.collateralUsd.toFixed(0)}</Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Leverage Mult</Typography>
+                <Typography variant="caption">Leverage Mult.</Typography>
                 <Typography variant="body2">
-                  {(positionInfo.cAmt / (positionInfo.cAmt - positionInfo.dAmt)).toFixed(3)}x
+                  {(positionInfo.collateralUsd / positionInfo.fundingUsd).toFixed(2)}x
                 </Typography>
               </Stack>
             </Grid>
@@ -288,21 +363,21 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Protocol Fee</Typography>
-                <Typography variant="body2">{positionInfo.pFee.toFixed(2)}</Typography>
+                <Typography variant="body2">{positionInfo.feeProtocol.toFixed(2)}</Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Zap Fee</Typography>
-                <Typography variant="body2">{positionInfo.zFee.toFixed(2)}</Typography>
+                <Typography variant="body2">{positionInfo.feeZap.toFixed(2)}</Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Swap Fee</Typography>
-                <Typography variant="body2">{positionInfo.sFee.toFixed(2)}</Typography>
+                <Typography variant="body2">{positionInfo.feeSwap.toFixed(2)}</Typography>
               </Stack>
             </Grid>
           </Grid>
