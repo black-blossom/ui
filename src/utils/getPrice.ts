@@ -30,6 +30,8 @@ const address : { [chainId: string]: { [pairName: string]: string  } } = {
 const getPrice = async (pair: string, chainId: number | undefined): Promise<number> => {
   if(chainId === undefined || network.customProvider === undefined) return 0;
 
+  if(pair === 'USD/USD') return 1;
+
   const tokenPair = PAIRS[chainId ? chainId : 137][pair];
   const contract = new ethers.Contract(address[chainId][pair], IUniswapV3PoolABI, network.customProvider);
 
