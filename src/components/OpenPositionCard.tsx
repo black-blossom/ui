@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { TrendingDown, TrendingUp } from '@mui/icons-material';
 
+import { DEFAULT_CHAIN } from '../utils/chains';
 import { USDC, Token } from '../utils/tokens';
 import { PAIRS, TokenPair } from '../utils/pairs';
 import { useChainId } from '../connectors/network';
@@ -79,12 +80,12 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
   const [token1Price, setToken1Price] = useState<number>(0);
 
   const [payAmt, setPayAmt] = useState<number>(0);
-  const fundingToken = USDC[chainId ? chainId : 137];
+  const fundingToken = USDC[chainId ? chainId : DEFAULT_CHAIN];
 
   const [leverageMultiplier, setLeverageMultiplier] = useState<number>(2);
 
   const [positionInfo, setPositionInfo] = useState<PositionInfo>({
-    tokenPair: PAIRS[chainId ? chainId : 137][pair],
+    tokenPair: PAIRS[chainId ? chainId : DEFAULT_CHAIN][pair],
     tradeType: tradeType,
     entryPrice: price,
 

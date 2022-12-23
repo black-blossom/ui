@@ -107,3 +107,5 @@ export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce<
   },
   {}
 )
+
+export const DEFAULT_CHAIN = 137;
