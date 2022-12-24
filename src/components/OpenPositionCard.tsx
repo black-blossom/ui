@@ -386,23 +386,28 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
                       {positionInfo.collateralToken.symbol} is required for collateral.
                     </Typography>
 
-                    <Stack direction="row" justifyContent="space-between" spacing={1}>
-                      <Stack direction="column">
-                        <Typography variant="caption">Protocol Fee (0.1% of Funding):</Typography>
-                        <Typography variant="caption">
-                          Zap Fee (Funded {positionInfo.fundingToken.symbol} to {positionInfo.collateralToken.symbol}):
-                        </Typography>
-                        <Typography variant="caption">FlashLoan Fee (0.09% of Borrowed):</Typography>
-                        <Typography variant="caption">
-                          Swap Fee (Borrowed {positionInfo.debtToken.symbol} to {positionInfo.collateralToken.symbol}):
-                        </Typography>
-                      </Stack>
-                      <Stack direction="column" alignItems="flex-end">
-                        <Typography variant="caption">${positionInfo.feeProtocol.toFixed(2)}</Typography>
-                        <Typography variant="caption">${positionInfo.feeZap.toFixed(2)}</Typography>
-                        <Typography variant="caption">${positionInfo.feeFlashloan.toFixed(2)}</Typography>
-                        <Typography variant="caption">${positionInfo.feeSwap.toFixed(2)}</Typography>
-                      </Stack>
+                    <Stack direction="column">
+                      <Typography variant="caption">Protocol Fee (0.1% of Funding):</Typography>
+                      <Typography variant="caption">${positionInfo.feeProtocol.toFixed(2)}</Typography>
+                    </Stack>
+
+                    <Stack direction="column">
+                      <Typography variant="caption">
+                        Zap Fee (Funded {positionInfo.fundingToken.symbol} to {positionInfo.collateralToken.symbol}):
+                      </Typography>
+                      <Typography variant="caption">${positionInfo.feeZap.toFixed(2)}</Typography>
+                    </Stack>
+
+                    <Stack direction="column">
+                      <Typography variant="caption">FlashLoan Fee (0.09% of Borrowed):</Typography>
+                      <Typography variant="caption">${positionInfo.feeFlashloan.toFixed(2)}</Typography>
+                    </Stack>
+
+                    <Stack direction="column">
+                      <Typography variant="caption">
+                        Swap Fee (Borrowed {positionInfo.debtToken.symbol} to {positionInfo.collateralToken.symbol}):
+                      </Typography>
+                      <Typography variant="caption">${positionInfo.feeSwap.toFixed(2)}</Typography>
                     </Stack>
                   </Stack>
                 )}
