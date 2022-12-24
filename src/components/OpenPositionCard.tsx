@@ -209,29 +209,6 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     // TODO: check the on-chain leverage result against the LTV
     console.log(`on-chain leverage: ${collateralAmount * collateralPriceUsd / (collateralAmount * collateralPriceUsd - debtAmount * debtPriceUsd)}`);
 
-    console.log({
-      tokenPair: tokenPair,
-      tradeType: openInfo.tradeType,
-      entryPrice: openInfo.price,
-
-      fundingToken: openInfo.fundingToken,
-      collateralToken: collateralToken,
-      debtToken: debtToken,
-
-      fundingUsd: openInfo.fundingAmount,
-      fundingAmount: openInfo.fundingAmount,
-
-      collateralUsd: collateralAmount * collateralPriceUsd,
-      collateralAmount: collateralAmount,
-
-      debtUsd: debtAmount * debtPriceUsd,
-      debtAmount: debtAmount,
-
-      feeZap: zapFee,
-      feeSwap: swapFee,
-      feeProtocol: protocolFee,
-    });
-
     setPositionInfo({
       tokenPair: tokenPair,
       tradeType: openInfo.tradeType,
