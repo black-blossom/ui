@@ -25,9 +25,9 @@ import getPrice from '../utils/getPrice';
 const LONG  = 'LONG';
 const SHORT = 'SHORT';
 
-const UNISWAP_FEE = 0.005;
+const UNISWAP_FEE = 0.0005;
 const PROTOCOL_FEE = 0.001;
-const FLASHLOAN_FEE = 0.009;
+const FLASHLOAN_FEE = 0.0009;
 
 interface OpenInfo {
   pair?: string
@@ -64,6 +64,7 @@ interface PositionInfo {
   feeZap: number
   feeSwap: number
   feeProtocol: number
+  feeFlashloan: number
 };
 
 interface IOpenPositionCardProps {
@@ -105,6 +106,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     feeZap: 0,
     feeSwap: 0,
     feeProtocol: 0,
+    feeFlashloan: 0,
   });
 
   useEffect(() => {
@@ -188,15 +190,11 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     const collateralPriceUsd = openInfo.tradeType === LONG ? openInfo.token0Price : openInfo.token1Price;
     const debtPriceUsd       = openInfo.tradeType === LONG ? openInfo.token1Price : openInfo.token0Price;
 
-    let amountUsd = openInfo.fundingAmount;
+    const protocolFee = openInfo.fundingAmount * PROTOCOL_FEE;
+    const zapFee = (openInfo.fundingAmount - protocolFee) * UNISWAP_FEE;
 
-    const protocolFee = amountUsd * PROTOCOL_FEE;
-    amountUsd -= protocolFee;
-
-    const zapFee = amountUsd * UNISWAP_FEE;
-    amountUsd -= zapFee;
-
-    let collateralAmount = amountUsd / collateralPriceUsd;
+    // we assume that funding is always USDC
+    let collateralAmount = (openInfo.fundingAmount - protocolFee - zapFee) / collateralPriceUsd;
 
     // flashloan should include protocolFee, zapFee, and an estimation of swapFee
     let flashloan = openInfo.fundingAmount * (openInfo.leverageMultiplier - 1) + zapFee + protocolFee;
@@ -256,6 +254,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
       feeZap: zapFee,
       feeSwap: swapFee,
       feeProtocol: protocolFee,
+      feeFlashloan: flashloanFee,
     });
   };
 
@@ -406,8 +405,8 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Swap Fee</Typography>
-                <Typography variant="body2">{positionInfo.feeSwap.toFixed(2)}</Typography>
+                <Typography variant="caption">Flashloan Fee</Typography>
+                <Typography variant="body2">{(positionInfo.feeSwap + positionInfo.feeFlashloan).toFixed(2)}</Typography>
               </Stack>
             </Grid>
           </Grid>
