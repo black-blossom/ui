@@ -132,6 +132,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     return () => clearInterval(updatePrices);
   }, [pair, chainId]);
 
+  // TODO: new pair's max leverage should be checked against selected leverage multiplier
   useEffect(() => {
     simulatePosition({ pair: pair });
   }, [pair]);
@@ -207,6 +208,32 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     collateralAmount += (flashloan - swapFee) / collateralPriceUsd;
 
     const debtAmount = flashloan + flashloanFee;
+
+    // TODO: check the on-chain leverage result against the LTV
+    console.log(`on-chain leverage: ${collateralAmount * collateralPriceUsd / (collateralAmount * collateralPriceUsd - debtAmount * debtPriceUsd)}`);
+
+    console.log({
+      tokenPair: tokenPair,
+      tradeType: openInfo.tradeType,
+      entryPrice: openInfo.price,
+
+      fundingToken: openInfo.fundingToken,
+      collateralToken: collateralToken,
+      debtToken: debtToken,
+
+      fundingUsd: openInfo.fundingAmount,
+      fundingAmount: openInfo.fundingAmount,
+
+      collateralUsd: collateralAmount * collateralPriceUsd,
+      collateralAmount: collateralAmount,
+
+      debtUsd: debtAmount * debtPriceUsd,
+      debtAmount: debtAmount,
+
+      feeZap: zapFee,
+      feeSwap: swapFee,
+      feeProtocol: protocolFee,
+    });
 
     setPositionInfo({
       tokenPair: tokenPair,
@@ -285,7 +312,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               size="small"
               step={0.1}
               min={1.5}
-              max={4}
+              max={positionInfo.collateralToken.maxLeverage}
             />
 
             <Button variant="outlined" fullWidth>Open Position</Button>
@@ -350,14 +377,16 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Liq. Price</Typography>
-                <Typography variant="body2">0</Typography>
+                <Typography variant="body2">
+                  {(positionInfo.debtAmount / (positionInfo.collateralAmount * positionInfo.collateralToken.liquidationThreshold)).toFixed(2)}
+                </Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Liq. Penalty</Typography>
-                <Typography variant="body2">5%</Typography>
+                <Typography variant="body2">{positionInfo.collateralToken.liquidationPenalty * 100}%</Typography>
               </Stack>
             </Grid>
 
