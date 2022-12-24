@@ -309,7 +309,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             />
 
             <Stack direction="row" alignItems="center" justifyContent="space-between">
-              <Typography variant="body2">Leverage Multiplier</Typography>
+              <Typography variant="body2">Leverage</Typography>
               <Typography variant="body2">{`${leverageMultiplier.toFixed(1)}x`}</Typography>
             </Stack>
 
@@ -329,45 +329,50 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
 
       <Grid item xs={12} md={6}>
         <Paper variant="outlined" sx={{ height: 314, width: 1, p: 2 }}>
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <Badge
-              overlap="circular"
-              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-              badgeContent={
-                <Avatar
-                  src={positionInfo.tokenPair.token1.logoSrc}
-                  sx={{ width: 16, height: 16, bgcolor: 'white' }} 
-                />
-              }
-            >
-              <Avatar
-                src={positionInfo.tokenPair.token0.logoSrc}
-                sx={{ width: 36, height: 36, bgcolor: 'white' }}
-              />
-            </Badge>
-            <Typography variant="body2">{tradeType} {`${positionInfo.tokenPair.token0.symbol}/${positionInfo.tokenPair.token1.symbol}`}</Typography>
-          </Stack>
 
-          <Box sx={{ m: 3 }} />
+          <Box sx={{ m: 1 }} />
 
-          <Grid container spacing={2}>
+          <Grid container spacing={3}>
+            <Grid item xs={4}>
+              <Stack direction="column" alignItems="center"  spacing={1}>
+                <Typography variant="caption">Pair</Typography>
+                <Typography variant="body2">
+                  {`${positionInfo.tokenPair.token0.symbol}/${positionInfo.tokenPair.token1.symbol}`}
+                </Typography>
+              </Stack>
+            </Grid>
+
+            <Grid item xs={4}>
+              <Stack direction="column" alignItems="center"  spacing={1}>
+                <Typography variant="caption">Trade Type</Typography>
+                <Typography variant="body2">{positionInfo.tradeType}</Typography>
+              </Stack>
+            </Grid>
+
+            <Grid item xs={4}>
+              <Stack direction="column" alignItems="center"  spacing={1}>
+                <Typography variant="caption">Net Value</Typography>
+                <Typography variant="body2">${netValueUsd.toFixed(0)}</Typography>
+              </Stack>
+            </Grid>
+
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Funding</Typography>
-                <Typography variant="body2">{positionInfo.fundingUsd.toFixed(0)}</Typography>
+                <Typography variant="body2">${positionInfo.fundingUsd.toFixed(0)}</Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Position Size</Typography>
-                <Typography variant="body2">{positionInfo.collateralUsd.toFixed(0)}</Typography>
+                <Typography variant="body2">${positionInfo.collateralUsd.toFixed(0)}</Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Leverage Mult.</Typography>
+                <Typography variant="caption">Leverage</Typography>
                 <Typography variant="body2">
                   {leverage.toFixed(2)}x
                 </Typography>
@@ -401,7 +406,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Fees</Typography>
                 <Typography variant="body2">
-                  {totalFees.toFixed(2)}
+                  ${totalFees.toFixed(2)}
                 </Typography>
               </Stack>
             </Grid>
