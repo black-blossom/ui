@@ -258,6 +258,14 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     });
   };
 
+  const leverage = positionInfo.collateralUsd / positionInfo.fundingAmount;
+  const netValueUsd = positionInfo.collateralUsd - positionInfo.debtUsd;
+  const liquidationPrice = positionInfo.debtAmount / (positionInfo.collateralAmount * positionInfo.collateralToken.liquidationThreshold);
+  const totalFees = positionInfo.feeProtocol + positionInfo.feeZap + positionInfo.feeSwap + positionInfo.feeFlashloan;
+  const pnl = positionInfo.fundingAmount - netValueUsd;
+  const pnlPercentage = pnl / positionInfo.fundingAmount * 100;
+  const breakevenPercentage = pnlPercentage / leverage;
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
@@ -361,7 +369,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Leverage Mult.</Typography>
                 <Typography variant="body2">
-                  {(positionInfo.collateralUsd / positionInfo.fundingUsd).toFixed(2)}x
+                  {leverage.toFixed(2)}x
                 </Typography>
               </Stack>
             </Grid>
@@ -377,7 +385,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               <Stack direction="column" alignItems="center"  spacing={1}>
                 <Typography variant="caption">Liq. Price</Typography>
                 <Typography variant="body2">
-                  {(positionInfo.debtAmount / (positionInfo.collateralAmount * positionInfo.collateralToken.liquidationThreshold)).toFixed(2)}
+                  {liquidationPrice.toFixed(2)}
                 </Typography>
               </Stack>
             </Grid>
@@ -391,22 +399,26 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Protocol Fee</Typography>
-                <Typography variant="body2">{positionInfo.feeProtocol.toFixed(2)}</Typography>
+                <Typography variant="caption">Fees</Typography>
+                <Typography variant="body2">
+                  {totalFees.toFixed(2)}
+                </Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Zap Fee</Typography>
-                <Typography variant="body2">{positionInfo.feeZap.toFixed(2)}</Typography>
+                <Typography variant="caption">PnL</Typography>
+                <Typography variant="body2">
+                  -{pnlPercentage.toFixed(2)}%
+                </Typography>
               </Stack>
             </Grid>
 
             <Grid item xs={4}>
               <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Flashloan Fee</Typography>
-                <Typography variant="body2">{(positionInfo.feeSwap + positionInfo.feeFlashloan).toFixed(2)}</Typography>
+                <Typography variant="caption">Breakeven</Typography>
+                <Typography variant="body2">+{breakevenPercentage.toFixed(2)}%</Typography>
               </Stack>
             </Grid>
           </Grid>
