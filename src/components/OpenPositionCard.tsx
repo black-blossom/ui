@@ -326,10 +326,26 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             </Grid>
 
             <Grid item xs={4}>
-              <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Net Value</Typography>
-                <Typography variant="body2">${netValueUsd.toFixed(0)}</Typography>
-              </Stack>
+              <Tooltip
+                title={(
+                  <Stack direction="row" justifyContent="space-between" spacing={2}>
+                    <Stack direction="column">
+                      <Typography variant="caption">Collateral:</Typography>
+                      <Typography variant="caption">Debt:</Typography>
+                    </Stack>
+
+                    <Stack direction="column" alignItems="flex-end">
+                      <Typography variant="caption">${positionInfo.collateralUsd.toFixed(2)}</Typography>
+                      <Typography variant="caption">${positionInfo.debtUsd.toFixed(2)}</Typography>
+                    </Stack>
+                  </Stack>
+                )}
+              >
+                <Stack direction="column" alignItems="center"  spacing={1}>
+                  <Typography variant="caption">Net Value</Typography>
+                  <Typography variant="body2">${netValueUsd.toFixed(0)}</Typography>
+                </Stack>
+              </Tooltip>
             </Grid>
 
             <Grid item xs={4}>
@@ -340,10 +356,18 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             </Grid>
 
             <Grid item xs={4}>
-              <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Position Size</Typography>
-                <Typography variant="body2">${positionInfo.collateralUsd.toFixed(0)}</Typography>
-              </Stack>
+              <Tooltip
+                title={(
+                  <Typography variant="caption">
+                    {positionInfo.collateralAmount.toFixed(5)} {positionInfo.collateralToken.symbol}
+                  </Typography>
+                )}
+              >
+                <Stack direction="column" alignItems="center"  spacing={1}>
+                  <Typography variant="caption">Position Size</Typography>
+                  <Typography variant="body2">${positionInfo.collateralUsd.toFixed(0)}</Typography>
+                </Stack>
+              </Tooltip>
             </Grid>
 
             <Grid item xs={4}>
