@@ -331,11 +331,13 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
                 title={(
                   <Stack direction="row" justifyContent="space-between" spacing={2}>
                     <Stack direction="column">
+                      <Typography variant="caption">Net Value:</Typography>
                       <Typography variant="caption">Collateral:</Typography>
                       <Typography variant="caption">Debt:</Typography>
                     </Stack>
 
                     <Stack direction="column" alignItems="flex-end">
+                      <Typography variant="caption">${netValueUsd.toFixed(2)}</Typography>
                       <Typography variant="caption">${positionInfo.collateralUsd.toFixed(2)}</Typography>
                       <Typography variant="caption">${positionInfo.debtUsd.toFixed(2)}</Typography>
                     </Stack>
