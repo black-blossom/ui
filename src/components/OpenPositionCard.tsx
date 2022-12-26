@@ -162,7 +162,7 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
   };
 
   const handlePayAmtInputChanged = (event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    const value = Number(event.target.value);
+    const value = Math.abs(Number(event.target.value));
 
     simulatePosition({ fundingAmount: value });
     setPayAmt(value);
@@ -176,6 +176,8 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
   };
 
   const handleOpenPositionButtonClicked = (info: PositionInfo) => {
+    if(payAmt < 20) return;
+
     handleOpenPosition(info);
     setPayAmt(0);
   };
@@ -323,7 +325,14 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
               max={positionInfo.collateralToken.maxLeverage}
             />
 
-          <Button variant="outlined" onClick={() => handleOpenPosition(positionInfo)} fullWidth>Open Position</Button>
+          <Button
+            variant="outlined"
+            disabled={payAmt < 20}
+            onClick={() => handleOpenPositionButtonClicked(positionInfo)}
+            fullWidth
+          >
+            Open Position
+          </Button>
           </Stack>
         </Paper>
       </Grid>
