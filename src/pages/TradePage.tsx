@@ -7,6 +7,8 @@ import {
   Typography,
 } from '@mui/material';
 
+import { PositionInfo } from '../components/OpenPositionCard';
+import { getLocalStorage, setLocalStorage } from '../utils/localstorge';
 import IntervalButtonGroup from '../components/IntervalButtonGroup';
 import OpenPositionCard from '../components/OpenPositionCard';
 import PairSelector from '../components/PairSelector';
@@ -16,6 +18,7 @@ import TVChart from '../components/TVChart';
 const TradePage = () => {
   const [pair, setPair] = useState<string>('ETH/USD');
   const [interval, setInterval] = useState<string>('1h');
+  const [openPositions, setOpenPositions] = useState<[]>(getLocalStorage('openPositions', []));
 
   const handlePairChanged = (event: SelectChangeEvent) => {
     setPair(event.target.value);
@@ -23,6 +26,10 @@ const TradePage = () => {
 
   const handleIntervalChanged = (event: React.MouseEvent<HTMLElement>, newInterval: string | null) => {
     if(newInterval) setInterval(newInterval);
+  };
+
+  const handleOpenPosition = (info: PositionInfo) => {
+    console.log(info);
   };
 
   return (
@@ -51,7 +58,7 @@ const TradePage = () => {
         </Grid>
 
         <Grid item xs={12}>
-          <OpenPositionCard pair={pair} />
+          <OpenPositionCard pair={pair} handleOpenPosition={handleOpenPosition} />
         </Grid>
 
         <Grid item xs={12} md={6} lg={4}>

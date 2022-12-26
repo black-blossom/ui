@@ -42,7 +42,7 @@ interface OpenInfo {
   leverageMultiplier?: number;
 };
 
-interface PositionInfo {
+export interface PositionInfo {
   tokenPair: TokenPair
   tradeType: string
   entryPrice: number
@@ -64,13 +64,16 @@ interface PositionInfo {
   feeSwap: number
   feeProtocol: number
   feeFlashloan: number
+
+  openTimestamp: number
 };
 
 interface IOpenPositionCardProps {
-  pair: string;
+  pair: string
+  handleOpenPosition: (info: PositionInfo) => void
 };
 
-const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
+const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) => {
   const chainId = useChainId();
 
   const [price, setPrice] = useState<number>(0);
@@ -106,6 +109,8 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     feeSwap: 0,
     feeProtocol: 0,
     feeFlashloan: 0,
+
+    openTimestamp: Date.now(),
   });
 
   useEffect(() => {
@@ -167,6 +172,11 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     setLeverageMultiplier(value);
   };
 
+  const handleOpenPositionButtonClicked = (info: PositionInfo) => {
+    handleOpenPosition(info);
+    setPayAmt(0);
+  };
+
   const simulatePosition = async (openInfo: OpenInfo) => {
     if(!chainId) return;
 
@@ -209,7 +219,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     const debtAmount = flashloan + flashloanFee;
 
     // TODO: check the on-chain leverage result against the LTV
-    console.log(`on-chain leverage: ${collateralAmount * collateralPriceUsd / (collateralAmount * collateralPriceUsd - debtAmount * debtPriceUsd)}`);
+    // console.log(`on-chain leverage: ${collateralAmount * collateralPriceUsd / (collateralAmount * collateralPriceUsd - debtAmount * debtPriceUsd)}`);
 
     setPositionInfo({
       tokenPair: tokenPair,
@@ -233,6 +243,8 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
       feeSwap: swapFee * debtPriceUsd,
       feeProtocol: protocolFee,
       feeFlashloan: flashloanFee * debtPriceUsd,
+
+      openTimestamp: Date.now(),
     });
   };
 
@@ -305,7 +317,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
               max={positionInfo.collateralToken.maxLeverage}
             />
 
-            <Button variant="outlined" fullWidth>Open Position</Button>
+          <Button variant="outlined" onClick={() => handleOpenPosition(positionInfo)} fullWidth>Open Position</Button>
           </Stack>
         </Paper>
       </Grid>
