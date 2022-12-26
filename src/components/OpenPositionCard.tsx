@@ -237,6 +237,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
   const leverage = positionInfo.collateralUsd / positionInfo.fundingAmount;
   const netValueUsd = positionInfo.collateralUsd - positionInfo.debtUsd;
   const liquidationPrice = positionInfo.debtAmount / (positionInfo.collateralAmount * positionInfo.collateralToken.liquidationThreshold);
+  const liquidationPercent = (positionInfo.entryPrice - liquidationPrice) / positionInfo.entryPrice * 100;
   const totalFees = positionInfo.feeProtocol + positionInfo.feeZap + positionInfo.feeSwap + positionInfo.feeFlashloan;
   const pnl = positionInfo.fundingAmount - netValueUsd;
   const pnlPercentage = pnl / positionInfo.fundingAmount * 100;
@@ -389,9 +390,15 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             <Grid item xs={4}>
               <Tooltip
                 title={(
-                  <Typography variant="caption">
-                    This is the price at which the underlying Aave position can be liquidated. In a liquidation, up to 50% of the debt can be repaid and that value + liquidation penalty is taken from the collateral.
-                  </Typography>
+                  <Stack direction="column" spacing={1}>
+                    <Stack direction="row" spacing={1}>
+                      <Typography variant="caption">Change in price required:</Typography>
+                      <Typography variant="caption">-{liquidationPercent.toFixed(2)}%</Typography>
+                    </Stack>
+                    <Typography variant="caption">
+                      This is the price at which the underlying Aave position can be liquidated. In a liquidation, up to 50% of the debt can be repaid and that value + liquidation penalty is taken from the collateral.
+                    </Typography>
+                  </Stack>
                 )}
               >
                 <Stack direction="column" alignItems="center"  spacing={1}>
