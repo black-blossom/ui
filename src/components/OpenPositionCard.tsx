@@ -190,19 +190,21 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     const debtPriceUsd       = openInfo.tradeType === LONG ? openInfo.token1Price : openInfo.token0Price;
 
     const protocolFee = openInfo.fundingAmount * PROTOCOL_FEE;
-    const zapFee = (openInfo.fundingAmount - protocolFee) * UNISWAP_FEE;
+    const zapFee = fundingToken.symbol === collateralToken.symbol ? 0 : (openInfo.fundingAmount - protocolFee) * UNISWAP_FEE;
+
+    const debt2CollateralRate = collateralPriceUsd / debtPriceUsd;
 
     // we assume that funding is always USDC
     let collateralAmount = (openInfo.fundingAmount - protocolFee - zapFee) / collateralPriceUsd;
 
     // flashloan should include protocolFee, zapFee, and an estimation of swapFee
-    let flashloan = openInfo.fundingAmount * (openInfo.leverageMultiplier - 1) + zapFee + protocolFee;
+    let flashloan = (openInfo.fundingAmount * (openInfo.leverageMultiplier - 1) + zapFee + protocolFee) / debtPriceUsd;
     let swapFee = flashloan * UNISWAP_FEE;
     flashloan += swapFee;
     swapFee = flashloan * UNISWAP_FEE;
     const flashloanFee = flashloan * FLASHLOAN_FEE;
 
-    collateralAmount += (flashloan - swapFee) / collateralPriceUsd;
+    collateralAmount += (flashloan - swapFee) / debt2CollateralRate;
 
     const debtAmount = flashloan + flashloanFee;
 
@@ -228,16 +230,20 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
       debtAmount: debtAmount,
 
       feeZap: zapFee,
-      feeSwap: swapFee,
+      feeSwap: swapFee * debtPriceUsd,
       feeProtocol: protocolFee,
-      feeFlashloan: flashloanFee,
+      feeFlashloan: flashloanFee * debtPriceUsd,
     });
   };
 
   const leverage = positionInfo.collateralUsd / positionInfo.fundingAmount;
   const netValueUsd = positionInfo.collateralUsd - positionInfo.debtUsd;
-  const liquidationPrice = positionInfo.debtAmount / (positionInfo.collateralAmount * positionInfo.collateralToken.liquidationThreshold);
-  const liquidationPercent = (positionInfo.entryPrice - liquidationPrice) / positionInfo.entryPrice * 100;
+  let liquidationPrice = positionInfo.debtAmount / (positionInfo.collateralAmount * positionInfo.collateralToken.liquidationThreshold);
+  if(positionInfo.tradeType === SHORT) liquidationPrice = 1 / liquidationPrice;
+  const liquidationPercent = positionInfo.tradeType === LONG ?
+    (positionInfo.entryPrice - liquidationPrice) / positionInfo.entryPrice * 100
+    :
+    (liquidationPrice - positionInfo.entryPrice) / positionInfo.entryPrice * 100;
   const totalFees = positionInfo.feeProtocol + positionInfo.feeZap + positionInfo.feeSwap + positionInfo.feeFlashloan;
   const pnl = positionInfo.fundingAmount - netValueUsd;
   const pnlPercentage = pnl / positionInfo.fundingAmount * 100;
@@ -395,7 +401,9 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
                   <Stack direction="column" spacing={1}>
                     <Stack direction="row" spacing={1}>
                       <Typography variant="caption">Change in price required:</Typography>
-                      <Typography variant="caption">-{liquidationPercent.toFixed(2)}%</Typography>
+                      <Typography variant="caption">
+                        {positionInfo.tradeType === LONG ? '-' : '+'}{liquidationPercent.toFixed(2)}%
+                      </Typography>
                     </Stack>
                     <Typography variant="caption">
                       This is the price at which the underlying Aave position can be liquidated. In a liquidation, up to 50% of the debt can be repaid and that value + liquidation penalty is taken from the collateral.
@@ -406,7 +414,7 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
                 <Stack direction="column" alignItems="center"  spacing={1}>
                   <Typography variant="caption">Liq. Price</Typography>
                   <Typography variant="body2">
-                    {liquidationPrice.toFixed(2)}
+                    {liquidationPrice.toFixed(5)}
                   </Typography>
                 </Stack>
               </Tooltip>
@@ -432,12 +440,12 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
                       <Typography variant="caption">${positionInfo.feeProtocol.toFixed(2)}</Typography>
                     </Stack>
 
-                    <Stack direction="column">
+                    { positionInfo.feeZap !== 0 && <Stack direction="column">
                       <Typography variant="caption">
                         Zap Fee (Funded {positionInfo.fundingToken.symbol} to {positionInfo.collateralToken.symbol}):
                       </Typography>
                       <Typography variant="caption">${positionInfo.feeZap.toFixed(2)}</Typography>
-                    </Stack>
+                    </Stack>}
 
                     <Stack direction="column">
                       <Typography variant="caption">FlashLoan Fee (0.09% of Borrowed):</Typography>
