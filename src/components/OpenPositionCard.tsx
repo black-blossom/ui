@@ -14,6 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import { TrendingDown, TrendingUp } from '@mui/icons-material';
+import { ethers } from 'ethers';
 
 import { DEFAULT_CHAIN } from '../utils/chains';
 import { USDC, Token } from '../utils/tokens';
@@ -66,6 +67,7 @@ export interface PositionInfo {
   feeFlashloan: number
 
   openTimestamp: number
+  vault: string
 };
 
 interface IOpenPositionCardProps {
@@ -111,6 +113,7 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
     feeFlashloan: 0,
 
     openTimestamp: Date.now(),
+    vault: '',
   });
 
   useEffect(() => {
@@ -221,6 +224,8 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
     // TODO: check the on-chain leverage result against the LTV
     // console.log(`on-chain leverage: ${collateralAmount * collateralPriceUsd / (collateralAmount * collateralPriceUsd - debtAmount * debtPriceUsd)}`);
 
+    const openTimestamp = Date.now();
+
     setPositionInfo({
       tokenPair: tokenPair,
       tradeType: openInfo.tradeType,
@@ -244,7 +249,8 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
       feeProtocol: protocolFee,
       feeFlashloan: flashloanFee * debtPriceUsd,
 
-      openTimestamp: Date.now(),
+      openTimestamp: openTimestamp,
+      vault: ethers.utils.id(openTimestamp.toString()),
     });
   };
 
