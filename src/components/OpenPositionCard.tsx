@@ -387,12 +387,20 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
             </Grid>
 
             <Grid item xs={4}>
-              <Stack direction="column" alignItems="center"  spacing={1}>
-                <Typography variant="caption">Liq. Price</Typography>
-                <Typography variant="body2">
-                  {liquidationPrice.toFixed(2)}
-                </Typography>
-              </Stack>
+              <Tooltip
+                title={(
+                  <Typography variant="caption">
+                    This is the price at which the underlying Aave position can be liquidated. In a liquidation, up to 50% of the debt can be repaid and that value + liquidation penalty is taken from the collateral.
+                  </Typography>
+                )}
+              >
+                <Stack direction="column" alignItems="center"  spacing={1}>
+                  <Typography variant="caption">Liq. Price</Typography>
+                  <Typography variant="body2">
+                    {liquidationPrice.toFixed(2)}
+                  </Typography>
+                </Stack>
+              </Tooltip>
             </Grid>
 
             <Grid item xs={4}>
