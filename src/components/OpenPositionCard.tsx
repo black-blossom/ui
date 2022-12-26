@@ -133,8 +133,8 @@ const OpenPositionCard = ({ pair }: IOpenPositionCardProps) => {
     return () => clearInterval(updatePrices);
   }, [pair, chainId]);
 
-  // TODO: new pair's max leverage should be checked against selected leverage multiplier
   useEffect(() => {
+    setLeverageMultiplier(2.0);
     simulatePosition({ pair: pair });
   }, [pair]);
 
