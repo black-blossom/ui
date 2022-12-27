@@ -9,56 +9,41 @@ import {
   Typography,
 } from '@mui/material';
 
+import { PositionInfo } from './OpenPositionCard';
+
 const LONG  = 'LONG';
 const SHORT = 'SHORT';
 
-interface IPosition {
-  vault            : string;
-  pair             : 'WETH/USDC' | 'WETH/WBTC' | 'WBTC/USDC';
-  side             : 'LONG' | 'SHORT';
-  openTimestamp    : number;
-  closeTimestamp   : number;
-  fToken           : string;
-  cToken           : string;
-  dToken           : string;
-  entryPrice       : number;
-  iFundingUsd      : number;
-  iCollateralUsd   : number;
-  iDebtUsd         : number;
-  iFundingAmt      : number;
-  iCollateralAmt  : number;
-  iDebtAmt         : number;
-  fFundingUsd      : number;
-  fCollateralUsd   : number;
-  fDebtUsd         : number;
-  fFundingAmt      : number;
-  fCollateralAmt   : number;
-  fDebtAmt         : number;
-  feeOpenPosition  : number;
-  feeOpenSwap      : number;
-  feeOpenZap       : number;
-  feeClosePosition : number;
-  feeCloseSwap     : number;
-  feeCloseZap      : number;
-};
-
 interface IPositionCardProps {
-  position: IPosition;
+  position: PositionInfo;
 }
 
 const PositionCard = ({ position }: IPositionCardProps) => {
-  const collateralTokenPrice = 1255;
-  const debtTokenPrice = 1;
+  const currentPrice = 1255;
 
-  const priceDtC = collateralTokenPrice / debtTokenPrice;
+  const fundingPriceUsd = 1;
+  const collateralPriceUsd = 1255;
+  const debtPriceUsd = 1;
 
-  const currentCollateralUsd = position.iCollateralAmt * priceDtC;
-  const initialNetUsd = position.iCollateralUsd - position.iDebtUsd;
-  const currentNetUsd = position.iCollateralAmt * collateralTokenPrice - position.iDebtAmt * debtTokenPrice;
-  const pnl = currentNetUsd - position.iFundingUsd;
-  const leverage = position.iCollateralUsd / initialNetUsd;
+  const collateralUsd = position.collateralAmount * collateralPriceUsd;
+  const debtUsd = position.debtAmount * debtPriceUsd;
 
-  const LT = 0.825;
+  const initialNetValueUsd = position.collateralUsd - position.debtUsd;
+  const currentNetValueUsd = collateralUsd - debtUsd;
+
+  let liquidationPrice = position.debtAmount / (position.collateralAmount * position.collateralToken.liquidationThreshold);
+  if(position.tradeType === SHORT) liquidationPrice = 1 / liquidationPrice;
+  const liquidationPercent = position.tradeType === LONG ?
+    (position.entryPrice - liquidationPrice) / position.entryPrice * 100
+    :
+    (liquidationPrice - position.entryPrice) / position.entryPrice * 100;
+
+  const pnl = currentNetValueUsd - position.fundingUsd;
+  const pnlPercentage = pnl / position.fundingUsd * 100;
+
+  const leverage = position.collateralUsd / position.fundingUsd;
+
+  const vaultAddress = `${position.vault.slice(0, 5)}...${position.vault.slice(38, 42)}`;
 
   return (
     <ImageCard image='/card-images/regular-tree.gif'>
@@ -73,8 +58,12 @@ const PositionCard = ({ position }: IPositionCardProps) => {
           <Avatar src="/token-images/weth.png" />
         </Badge>
         <Stack direction="column">
-          <Typography variant="body2">{position.side} {position.pair}</Typography>
-          <Typography variant="caption">{position.vault}</Typography>
+          <Typography variant="body2">
+            {position.tradeType} {position.tokenPair.token0.symbol}/{position.tokenPair.token1.symbol}
+          </Typography>
+          <Typography variant="caption">
+            {vaultAddress}
+          </Typography>
         </Stack>
       </Stack>
 
@@ -84,42 +73,42 @@ const PositionCard = ({ position }: IPositionCardProps) => {
         <Grid item xs={4}>
           <Stack direction="column" alignItems="center"  spacing={1}>
             <Typography variant="caption">Position Size</Typography>
-            <Typography variant="body2">${currentCollateralUsd}</Typography>
+            <Typography variant="body2">${collateralUsd.toFixed(0)}</Typography>
           </Stack>
         </Grid>
 
         <Grid item xs={4}>
           <Stack direction="column" alignItems="center"  spacing={1}>
             <Typography variant="caption">Current Price</Typography>
-            <Typography variant="body2">${priceDtC}</Typography>
+            <Typography variant="body2">${currentPrice.toFixed(5)}</Typography>
           </Stack>
         </Grid>
 
         <Grid item xs={4}>
           <Stack direction="column" alignItems="center"  spacing={1}>
             <Typography variant="caption">Entry Price</Typography>
-            <Typography variant="body2">${position.entryPrice}</Typography>
+            <Typography variant="body2">${position.entryPrice.toFixed(5)}</Typography>
           </Stack>
         </Grid>
 
         <Grid item xs={4}>
           <Stack direction="column" alignItems="center"  spacing={1}>
-            <Typography variant="caption">Liquidation Price</Typography>
-            <Typography variant="body2">${(position.iDebtAmt / (position.iCollateralAmt * LT)).toFixed(0)}</Typography>
+            <Typography variant="caption">Liq. Price</Typography>
+            <Typography variant="body2">${liquidationPrice.toFixed(5)}</Typography>
           </Stack>
         </Grid>
 
         <Grid item xs={4}>
           <Stack direction="column" alignItems="center"  spacing={1}>
             <Typography variant="caption">PnL</Typography>
-            <Typography variant="body2" color="lightgreen">{pnl / position.iFundingUsd * 100}%</Typography>
+            <Typography variant="body2" color="lightgreen">{pnlPercentage.toFixed(2)}%</Typography>
           </Stack>
         </Grid>
 
         <Grid item xs={4}>
           <Stack direction="column" alignItems="center"  spacing={1}>
             <Typography variant="caption">Leverage</Typography>
-            <Typography variant="body2">{leverage}x</Typography>
+            <Typography variant="body2">{leverage.toFixed(2)}x</Typography>
           </Stack>
         </Grid>
       </Grid>
@@ -155,37 +144,5 @@ const ImageCard = ({ children, image }: IImageCardProps) => {
     </Paper>
   );
 };
-
-PositionCard.defaultProps = {
-  position: {
-    vault            : '7c0c...7d4a',
-    pair             : 'WETH/USDC',
-    side             : 'LONG',
-    openTimestamp    : Date.now(),
-    closeTimestamp   : null,
-    fundingToken     : 'USDC',
-    collateralToken  : 'ETH',
-    debtToken        : 'USDC',
-    entryPrice       : 1000,
-    iFundingUsd      : 1000,
-    iCollateralUsd   : 2000,
-    iDebtUsd         : 1000,
-    iFundingAmt      : 1000,
-    iCollateralAmt  : 2,
-    iDebtAmt         : 1000,
-    fFundingUsd      : null,
-    fCollateralUsd   : null,
-    fDebtUsd         : null,
-    fFundingAmt      : null,
-    fCollateralAmt   : null,
-    fDebtAmt         : null,
-    feeOpenPosition  : 0,
-    feeOpenSwap      : 0,
-    feeOpenZap       : 0,
-    feeClosePosition : null,
-    feeCloseSwap     : null,
-    feeCloseZap      : null,
-  }
-}
 
 export default PositionCard;

@@ -18,7 +18,7 @@ import TVChart from '../components/TVChart';
 const TradePage = () => {
   const [pair, setPair] = useState<string>('ETH/USD');
   const [interval, setInterval] = useState<string>('1h');
-  const [openPositions, setOpenPositions] = useState<[]>(getLocalStorage('openPositions', []));
+  const [openPositions, setOpenPositions] = useState<PositionInfo[]>(getLocalStorage('openPositions', []));
 
   const handlePairChanged = (event: SelectChangeEvent) => {
     setPair(event.target.value);
@@ -29,7 +29,9 @@ const TradePage = () => {
   };
 
   const handleOpenPosition = (info: PositionInfo) => {
-    console.log(info);
+    const positions = [info, ...openPositions];
+    setOpenPositions(positions);
+    setLocalStorage('openPositions', positions);
   };
 
   return (
@@ -61,12 +63,14 @@ const TradePage = () => {
           <OpenPositionCard pair={pair} handleOpenPosition={handleOpenPosition} />
         </Grid>
 
-        <Grid item xs={12} md={6} lg={4}>
-          <PositionCard />
-        </Grid>
-        <Grid item xs={12} md={6} lg={4}>
-          <PositionCard />
-        </Grid>
+        {openPositions.map((info, index) => {
+          console.log(info);
+          return (
+            <Grid key={index} item xs={12} md={6} lg={4}>
+              <PositionCard position={info} />
+            </Grid>
+          );
+        })}
       </Grid>
     </Container>
   );
