@@ -67,7 +67,12 @@ const getPrice = async (pair: string, chainId: number | undefined): Promise<numb
     tick,
   );
 
-  return match ? Number(pool.token0Price.toFixed(5)) : Number(pool.token1Price.toFixed(5));
+  return (
+    match ?
+      Number(pool.token0Price.toFixed(tokenPair.token0.decimals))
+      :
+      Number(pool.token1Price.toFixed(tokenPair.token1.decimals))
+  );
 };
 
 export default getPrice;
