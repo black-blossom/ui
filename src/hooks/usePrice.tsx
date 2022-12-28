@@ -17,6 +17,8 @@ const usePriceStore = create<PriceStore>((set, get) => ({
   updatePrices: 0,
 
   usePrice: (pair) => {
+    if(pair === 'USD/USD') return 1;
+
     const price = get().price.get(pair);
     return (price !== undefined ? price : 0 );
   },
