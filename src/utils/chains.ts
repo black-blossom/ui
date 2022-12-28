@@ -92,7 +92,6 @@ export const CHAINS: { [chainId: number]: BasicChainInformation | ExtendedChainI
 export const CHAINLIST: BasicChainInformation[] | ExtendedChainInformation[] = [
   CHAINS[137],
   CHAINS[42161],
-  CHAINS[10],
 ]
 
 export const URLS: { [chainId: number]: string[] } = Object.keys(CHAINS).reduce<{ [chainId: number]: string[] }>(
