@@ -4,24 +4,16 @@ import getPrice from '../utils/getPrice';
 import { PAIRSLIST } from '../utils/pairs';
 
 interface PriceStore {
-  price: Map<string, number>
+  prices: Map<string, number>
   updatePrices: number
 
-  usePrice: (pair: string) => number
   subscribe: (chainId: number) => void
   fetchPrices: (chainId: number) => Promise<void>
 };
 
 const usePriceStore = create<PriceStore>((set, get) => ({
-  price: new Map<string, number>(),
+  prices: new Map<string, number>(),
   updatePrices: 0,
-
-  usePrice: (pair) => {
-    if(pair === 'USD/USD') return 1;
-
-    const price = get().price.get(pair);
-    return (price !== undefined ? price : 0 );
-  },
 
   subscribe: (chainId) => {
     if(get().updatePrices !== 0) clearInterval(get().updatePrices);
@@ -48,8 +40,9 @@ const usePriceStore = create<PriceStore>((set, get) => ({
     pairList.forEach((pair, index) => {
       priceMap.set(pair, prices[index]);
     });
+    priceMap.set('USD/USD', 1);
 
-    set({ price: priceMap });
+    set({ prices: priceMap });
   },
 }));
 
