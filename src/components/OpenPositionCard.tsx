@@ -20,7 +20,7 @@ import { DEFAULT_CHAIN } from '../utils/chains';
 import { USDC, Token } from '../utils/tokens';
 import { PAIRS, TokenPair } from '../utils/pairs';
 import { useChainId } from '../connectors/network';
-import getPrice from '../utils/getPrice';
+import usePriceStore from '../hooks/usePrice';
 
 const LONG  = 'LONG';
 const SHORT = 'SHORT';
@@ -76,13 +76,16 @@ interface IOpenPositionCardProps {
 };
 
 const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) => {
+  const prices = usePriceStore(state => state.prices);
+
   const chainId = useChainId();
 
-  const [price, setPrice] = useState<number>(0);
   const [tradeType, setTradeType] = useState<string>(LONG);
 
-  const [token0Price, setToken0Price] = useState<number>(0);
-  const [token1Price, setToken1Price] = useState<number>(0);
+  // TODO: fix this
+  const price: number = prices.get(pair) !== undefined ? prices.get(pair) : 0;
+  const token0Price: number = prices.get(`${pair.split('/')[0]}/USD`) !== undefined ? prices.get(`${pair.split('/')[0]}/USD`) : 0;
+  const token1Price: number = prices.get(`${pair.split('/')[1]}/USD`) !== undefined ? prices.get(`${pair.split('/')[1]}/USD`) : 0;
 
   const [payAmt, setPayAmt] = useState<number>(0);
   const fundingToken = USDC[chainId ? chainId : DEFAULT_CHAIN];
@@ -115,31 +118,6 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
     openTimestamp: Date.now(),
     vault: '',
   });
-
-  useEffect(() => {
-    if(chainId === undefined) return;
-
-    const fetchPrices = async () => {
-      // fetch pair price, token0 usd price and token1 usd price
-      const prices = await Promise.all([
-        getPrice(pair, chainId),
-        getPrice(`${pair.split('/')[0]}/USD`, chainId),
-        getPrice(`${pair.split('/')[1]}/USD`, chainId),
-      ]);
-
-      setPrice(prices[0]);
-      setToken0Price(prices[1]);
-      setToken1Price(prices[2]);
-    };
-
-    fetchPrices();
-
-    // sub
-    const updatePrices = window.setInterval(() => fetchPrices(), 5000);
-
-    // unsub
-    return () => clearInterval(updatePrices);
-  }, [pair, chainId]);
 
   useEffect(() => {
     setLeverageMultiplier(2.0);
@@ -204,7 +182,7 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
     const collateralPriceUsd = openInfo.tradeType === LONG ? openInfo.token0Price : openInfo.token1Price;
     const debtPriceUsd       = openInfo.tradeType === LONG ? openInfo.token1Price : openInfo.token0Price;
 
-    const protocolFee = openInfo.fundingAmount * PROTOCOL_FEE;
+    const protocolFee = openInfo.fundingAmount * leverageMultiplier * PROTOCOL_FEE;
     const zapFee = fundingToken.symbol === collateralToken.symbol ? 0 : (openInfo.fundingAmount - protocolFee) * UNISWAP_FEE;
 
     const debt2CollateralRate = collateralPriceUsd / debtPriceUsd;
@@ -463,7 +441,7 @@ const OpenPositionCard = ({ pair, handleOpenPosition }: IOpenPositionCardProps) 
                     </Typography>
 
                     <Stack direction="column">
-                      <Typography variant="caption">Protocol Fee (0.1% of Funding):</Typography>
+                      <Typography variant="caption">Protocol Fee (0.1% of Position Size):</Typography>
                       <Typography variant="caption">${positionInfo.feeProtocol.toFixed(2)}</Typography>
                     </Stack>
 

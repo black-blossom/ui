@@ -14,11 +14,16 @@ import OpenPositionCard from '../components/OpenPositionCard';
 import PairSelector from '../components/PairSelector';
 import PositionCard from '../components/PositionCard';
 import TVChart from '../components/TVChart';
+import usePriceStore from '../hooks/usePrice';
 
 const TradePage = () => {
+  const prices = usePriceStore(state => state.prices);
+
   const [pair, setPair] = useState<string>('ETH/USD');
   const [interval, setInterval] = useState<string>('1h');
   const [openPositions, setOpenPositions] = useState<PositionInfo[]>(getLocalStorage('openPositions', []));
+
+  const pairPrice = prices.get(pair) !== undefined ? prices.get(pair) : 0;
 
   const handlePairChanged = (event: SelectChangeEvent) => {
     setPair(event.target.value);
@@ -43,7 +48,7 @@ const TradePage = () => {
 
             <Stack direction="column" alignItems="center">
               <Typography variant="caption">Market Price</Typography>
-              <Typography variant="body2">$1262.42</Typography>
+              <Typography variant="body2">${pairPrice?.toFixed(5)}</Typography>
             </Stack>
 
             <Stack direction="column" alignItems="center">
